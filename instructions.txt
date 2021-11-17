@@ -1,0 +1,4 @@
+Server
+In server folder
+npm install
+npm run devStart
