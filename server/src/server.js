@@ -16,9 +16,9 @@ app.use(express.json());
 
 // imports ROUTES
 
-const userRoute = require('./routes/drive');
+const drivesRoute = require('./routes/drives');
 
-app.use('/drive', userRoute);
+app.use('/drives', drivesRoute);
 
 mongoose.connect(
     process.env.DB_CONNECTION, {
