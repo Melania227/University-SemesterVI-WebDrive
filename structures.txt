@@ -1,14 +1,14 @@
-user
+drives
 {
-    "username": "El pepe",
+    "user": "El pepe",
     "maxBytes": 30,
     "currentBytes": 15,
-    root: [
+    "root": [
         {file},
         {directory},
         {file}
     ]
-    shared: [
+    "shared": [
         {
             username: "El bro"
             path: ["root","CDI"]
