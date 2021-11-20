@@ -3,20 +3,8 @@ drives
     "user": "El pepe",
     "maxBytes": 30,
     "currentBytes": 15,
-    "root": [
-        {file},
-        {directory},
-        {file}
-    ]
-    "shared": [
-        {
-            username: "El bro"
-            path: ["root","CDI"]
-        },
-        {
-            username: "El bro"
-            path: ["root","CDI","derivadas"]
-        }
+    "root": folder
+    "shared": folder
     ]
 }
 
@@ -33,8 +21,8 @@ folders
 {
     "type": "folder",
     directories: [
-        {file},
-        {directory},
-        {file}
+        file,
+        folder,
+        file
     ]
 }
