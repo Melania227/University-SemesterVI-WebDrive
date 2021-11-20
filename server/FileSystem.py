@@ -55,5 +55,37 @@ class FileSystem:
         }
     }
     
+    #Methods 
+    def response(self, error, response):
+        return {"error": error, "response": response}
+
+    #Session Methods 
+    def signUp(self, user, maxBytes):
+        if (user in self.drives):
+            return self.response(True, "Este usuario ya existe.")
+        
+        self.drives[user] = newDrive(maxBytes)
+
+        return self.response(False, f"Se creo el drive para el usuario {user}.")
+
+    def logIn(self, user):
+        if (not user in self.drives):
+            return self.response(True, "Este usuario no está registrado.")
+        
+        self.sessions[user] = []
+
+        return self.response(False, self.drives[user])
+
+    def logOut(self, user):
+        if (user in self.sessions):
+            self.sessions.pop(user)
+
+        return self.response(False, "Se cerró sesion correctamente")
+
+    def getCurrentPaths(self, user):
+        if (user in self.sessions):
+            return self.response(False, self.sessions[user])
+
+        return self.response(True, "Este usuario no ah iniciado sesion.") 
 
    
