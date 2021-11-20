@@ -88,4 +88,98 @@ class FileSystem:
 
         return self.response(True, "Este usuario no ah iniciado sesion.") 
 
-   
+    #FileSystem Methods 
+
+    #Folders Methods 
+
+    def getFolder(self, user, paths):
+
+        folder = self.drives[user][paths[0]]
+
+        for i in range (1,len(paths)):
+            directories = folder["directories"]
+            found = False
+            for dir in directories:
+                if (dir["name"] == paths[i]):
+                    folder = dir
+                    found = True
+
+            if(not found):
+                return self.response(True, "El directorio no pudo ser encontrado.")
+        
+        return folder 
+
+    def getCurrentFolder(self, user):
+        paths = self.sessions[user]
+        return self.getFolder(user, paths)
+
+    def openFolder(self, user, name):
+        self.sessions[user].append(name)
+        paths = self.sessions[user]
+        folder = self.getFolder(user, paths)
+
+        if("error" in folder):
+            self.sessions[user] = self.sessions[user][:-1]
+            return folder
+
+        return folder
+    
+    def closeFolder(self, user):
+        self.sessions[user] = self.sessions[user][:-1]
+        paths = self.sessions[user]
+        folder = self.getFolder(user, paths)
+        
+        if("error" in folder):
+            return folder
+
+        return folder
+    
+    def createFolder(self, user, name):
+        paths = self.sessions[user]
+        folder = self.getFolder(user, paths)
+        
+        if("error" in folder):
+            return folder
+
+
+        directories = folder["directories"]
+        for dir in directories:
+            if(dir["name"] == name):
+                return self.response(True, "Este directorio ya existe.")
+
+        nFolder = newFolder(name) 
+        directories.append(nFolder)
+
+        return self.response(False, nFolder)
+    
+    def updateFolder(self, user, name, newName):
+        paths = self.sessions[user]
+        folder = self.getFolder(user, paths)
+        
+        if("error" in folder):
+            return folder
+
+
+        directories = folder["directories"]
+        for dir in directories:
+            if(dir["name"] == name):
+                dir["name"] = newName
+                return self.response(False, dir)
+
+        return self.response(True, "El directorio no pudo ser encontrado.")
+
+    def delete(self, user, name):
+        paths = self.sessions[user]
+        folder = self.getFolder(user, paths)
+        
+        if("error" in folder):
+            return folder
+
+
+        directories = folder["directories"]
+        for dir in directories:
+            if(dir["name"] == name):
+                directories.remove(dir)
+                return self.response(False, dir)
+
+        return self.response(True, "No pudo ser encontrado.")
