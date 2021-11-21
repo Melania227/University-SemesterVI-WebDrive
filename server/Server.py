@@ -74,6 +74,35 @@ def postCloseFolder():
     user = request.json.get("user")
     return fileSystem.closeFolder(user)
 
+#Files Routes
+@app.route('/files', methods =['POST'])
+def postFile():
+    user = request.json.get("user")
+    name = request.json.get("name")
+    data = request.json.get("data")
+    return fileSystem.creatFile(user, name, data)
+
+@app.route('/files', methods =['GET'])
+def getFile():
+    user = request.json.get("user")
+    name = request.json.get("name")
+    return fileSystem.openFile(user, name)
+
+@app.route('/files', methods =['DELETE'])
+def deleteFile():
+    user = request.json.get("user")
+    name = request.json.get("name")
+    return fileSystem.delete(user, name)
+
+@app.route('/files', methods =['PATCH'])
+def updateFile():
+    user = request.json.get("user")
+    name = request.json.get("name")
+    newName = request.json.get("newName")
+    data = request.json.get("data")
+    newData = request.json.get("newData")
+    return fileSystem.updateFile(user, name, newName, newData)
+
 
 #Main
 if __name__ == "__main__":
