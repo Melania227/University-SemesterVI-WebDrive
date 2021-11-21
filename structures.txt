@@ -1,0 +1,40 @@
+user
+{
+    "username": "El pepe",
+    "maxBytes": 30,
+    "currentBytes": 15,
+    root: [
+        {file},
+        {directory},
+        {file}
+    ]
+    shared: [
+        {
+            username: "El bro"
+            path: ["root","CDI"]
+        },
+        {
+            username: "El bro"
+            path: ["root","CDI","derivadas"]
+        }
+    ]
+}
+
+files
+{
+    "type": "file",
+    "name": "prueba",
+    "extension": "txt",
+    "size": 10, 
+    "data": "El texto es este."
+}
+
+folders
+{
+    "type": "folder",
+    directories: [
+        {file},
+        {directory},
+        {file}
+    ]
+}
