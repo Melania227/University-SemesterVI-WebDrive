@@ -1,14 +1,13 @@
-import json
 from os import path
 
-from models import newDrive, newFolder, newFile
+from DataModels import newDrive, newFolder, newFile
 
 class FileSystem:
     def __init__(self):
-        self.sessions = {"Velvet":["root"]}
+        self.sessions = {"Velvet":["root","jose"]}
         self.drives = {"Velvet": {
-            "currentBytes": 0,
-            "maxBytes": 30,
+            "currentBytes": 12,
+            "maxBytes": 100,
             "root": {
                 "directories": [
                     {
@@ -22,6 +21,12 @@ class FileSystem:
                                 "directories": [],
                                 "name": "jose2",
                                 "type": "folder"
+                            },
+                            {
+                                "type": "file",
+                                "name" : "text.txt",
+                                "data" :  "This is an example text.",
+                                "size" : 24
                             }
                         ],
                         "name": "jose",
@@ -89,9 +94,28 @@ class FileSystem:
         return self.response(True, "Este usuario no ah iniciado sesion.") 
 
     #FileSystem Methods 
+    def delete(self, user, name):
+        paths = self.sessions[user]
+        folder = self.getFolder(user, paths)
+        
+        if("error" in folder):
+            return folder
+
+
+        directories = folder["directories"]
+        for dir in directories:
+            if(dir["name"] == name):
+                directories.remove(dir)
+
+                #If is a file free memory
+                if(dir["type"] == "file"):
+                    self.drives[user]["currentBytes"] -= dir["size"]
+                
+                return self.response(False, dir)
+
+        return self.response(True, "No pudo ser encontrado.")
 
     #Folders Methods 
-
     def getFolder(self, user, paths):
 
         folder = self.drives[user][paths[0]]
@@ -168,7 +192,53 @@ class FileSystem:
 
         return self.response(True, "El directorio no pudo ser encontrado.")
 
-    def delete(self, user, name):
+    #Files
+    def openFile(self, user, name):
+
+        paths = self.sessions[user]
+        folder = self.getFolder(user, paths)      
+
+        if("error" in folder):
+            return folder
+        
+        directories = folder["directories"]
+
+        for dir in directories:
+            if(dir["name"] == name):
+                return self.response(False, dir)
+
+        return self.response(True, "El archivo no se encuentra en el directorio.")
+
+    def creatFile(self, user, name, data):
+
+        fileLen = len(data)
+        self.drives[user]["currentBytes"] += fileLen
+        
+        if(self.drives[user]["currentBytes"]>self.drives[user]["maxBytes"]):
+            self.drives[user]["currentBytes"] -= fileLen
+            return self.response(True, "No hay espacio disponible para este archivo.") 
+        
+        paths = self.sessions[user]
+        folder = self.getFolder(user, paths)        
+    
+        if("error" in folder):
+            return folder
+
+        directories = folder["directories"]
+
+        for dir in directories:
+            if(dir["name"] == name):
+                return self.response(True, "Este directorio ya existe.")      
+
+        nFile = newFile(name, data, fileLen)
+        directories.append(nFile)
+
+        return self.response(False, nFile)
+    
+    def updateFile(self, user, name, newName, newData):
+
+        newFileLen = len(newData)
+
         paths = self.sessions[user]
         folder = self.getFolder(user, paths)
         
@@ -179,7 +249,22 @@ class FileSystem:
         directories = folder["directories"]
         for dir in directories:
             if(dir["name"] == name):
-                directories.remove(dir)
+                
+                #Update size
+                self.drives[user]["currentBytes"]-= dir["size"]
+                self.drives[user]["currentBytes"]+= newFileLen
+                
+                if(self.drives[user]["currentBytes"]>self.drives[user]["maxBytes"]):
+                    
+                    self.drives[user]["currentBytes"]+= len(dir["data"])
+                    self.drives[user]["currentBytes"]-= newFileLen
+                    
+                    return self.response(True, "No hay espacio disponible para este archivo.") 
+
+                dir["name"] = newName
+                dir["data"] = newData
+                dir["size"] = newFileLen
+                
                 return self.response(False, dir)
 
-        return self.response(True, "No pudo ser encontrado.")
+        return self.response(True, "El archivo no pudo ser encontrado.")
