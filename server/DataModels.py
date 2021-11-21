@@ -1,4 +1,5 @@
 #Models
+
 def newDrive(maxBytes):
     drive = {
         "maxBytes": maxBytes,
@@ -16,11 +17,11 @@ def newFolder(name):
     }
     return folder
 
-def newFile(name, data, extension):
-    folder = {
+def newFile(name, data, size):
+    file = {
         "type": "file",
         "name" : name,
-        "extension": extension,
-        "data" :  data   
+        "data" :  data,
+        "size" : size
     }
-    return folder
+    return file
