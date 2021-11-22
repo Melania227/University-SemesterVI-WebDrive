@@ -35,6 +35,15 @@ def postLogout():
     user = request.json.get("user")
     return fileSystem.logOut(user)
 
+@app.route('/users/cleanPaths', methods =['POST'])
+def postLogout():
+    user = request.json.get("user")
+    return fileSystem.cleanPaths(user)
+
+@app.route('/users/storage', methods =['GET'])
+def postLogout():
+    user = request.json.get("user")
+    return fileSystem.getCurrentStorage(user)
 
 #FileSystem Routes
 
