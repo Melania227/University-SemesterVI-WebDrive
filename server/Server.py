@@ -42,11 +42,13 @@ def postLogout():
     return fileSystem.logOut(user)
 
 @app.route('/users/cleanPaths', methods =['POST'])
+@cross_origin()
 def postLogout():
     user = request.json.get("user")
     return fileSystem.cleanPaths(user)
 
 @app.route('/users/storage', methods =['GET'])
+@cross_origin()
 def postLogout():
     user = request.json.get("user")
     return fileSystem.getCurrentStorage(user)
