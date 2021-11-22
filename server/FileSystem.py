@@ -1,4 +1,5 @@
 from os import path
+from datetime import datetime
 
 from DataModels import newDrive, newFolder, newFile
 
@@ -67,31 +68,48 @@ class FileSystem:
     #Session Methods 
     def signUp(self, user, maxBytes):
         if (user in self.drives):
-            return self.response(True, "Este usuario ya existe.")
+            return self.response(True, "This user already exists.")
         
         self.drives[user] = newDrive(maxBytes)
 
-        return self.response(False, f"Se creo el drive para el usuario {user}.")
+        return self.response(False, f"Drive created for user {user}.")
 
     def logIn(self, user):
         if (not user in self.drives):
-            return self.response(True, "Este usuario no está registrado.")
+            return self.response(True, "This user is not registered.")
         
         self.sessions[user] = []
 
-        return self.response(False, self.drives[user])
+        return self.response(False, "User logged In.")
 
     def logOut(self, user):
         if (user in self.sessions):
             self.sessions.pop(user)
 
-        return self.response(False, "Se cerró sesion correctamente")
+        return self.response(False, "User logged Out.")
 
     def getCurrentPaths(self, user):
         if (user in self.sessions):
             return self.response(False, self.sessions[user])
 
-        return self.response(True, "Este usuario no ah iniciado sesion.") 
+        return self.response(True, "This user is not logged in.") 
+
+    def cleanPaths(self, user):
+        if (user in self.sessions):
+            self.sessions[user] = []
+            return self.response(False, self.sessions[user])
+            
+        return self.response(True, "This user is not logged in.") 
+
+    def getCurrentStorage(self, user):
+        if(user in self.drives):
+            max = self.drives[user]["maxBytes"]
+            current = self.drives[user]["currentBytes"]
+            percentage = self.drives[user]["currentBytes"]/self.drives[user]["maxBytes"]
+            return self.response(False, {"maxBytes": max, "currentBytes": current, "percentage": percentage})
+        
+        return self.response(True, "This user is not registered.")
+
 
     #FileSystem Methods 
     def delete(self, user, name):
@@ -113,7 +131,7 @@ class FileSystem:
                 
                 return self.response(False, dir)
 
-        return self.response(True, "No pudo ser encontrado.")
+        return self.response(True, "It could not be found.")
 
     #Folders Methods 
     def getFolder(self, user, paths):
@@ -129,7 +147,7 @@ class FileSystem:
                     found = True
 
             if(not found):
-                return self.response(True, "El directorio no pudo ser encontrado.")
+                return self.response(True, "The directory could not be found.")
         
         return folder 
 
@@ -169,7 +187,7 @@ class FileSystem:
         directories = folder["directories"]
         for dir in directories:
             if(dir["name"] == name):
-                return self.response(True, "Este directorio ya existe.")
+                return self.response(True, "This directory already exists.")
 
         nFolder = newFolder(name) 
         directories.append(nFolder)
@@ -190,7 +208,7 @@ class FileSystem:
                 dir["name"] = newName
                 return self.response(False, dir)
 
-        return self.response(True, "El directorio no pudo ser encontrado.")
+        return self.response(True, "The directory could not be found.")
 
     #Files
     def openFile(self, user, name):
@@ -207,7 +225,7 @@ class FileSystem:
             if(dir["name"] == name):
                 return self.response(False, dir)
 
-        return self.response(True, "El archivo no se encuentra en el directorio.")
+        return self.response(True, "The file cannot be found in the directory.")
 
     def creatFile(self, user, name, data):
 
@@ -216,7 +234,7 @@ class FileSystem:
         
         if(self.drives[user]["currentBytes"]>self.drives[user]["maxBytes"]):
             self.drives[user]["currentBytes"] -= fileLen
-            return self.response(True, "No hay espacio disponible para este archivo.") 
+            return self.response(True, "There is no space available for this file.") 
         
         paths = self.sessions[user]
         folder = self.getFolder(user, paths)        
@@ -228,9 +246,12 @@ class FileSystem:
 
         for dir in directories:
             if(dir["name"] == name):
-                return self.response(True, "Este directorio ya existe.")      
+                return self.response(True, "This directory already exists.")      
 
-        nFile = newFile(name, data, fileLen)
+        now = datetime.now()
+        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+
+        nFile = newFile(name, data, fileLen, dt_string)
         directories.append(nFile)
 
         return self.response(False, nFile)
@@ -259,12 +280,17 @@ class FileSystem:
                     self.drives[user]["currentBytes"]+= len(dir["data"])
                     self.drives[user]["currentBytes"]-= newFileLen
                     
-                    return self.response(True, "No hay espacio disponible para este archivo.") 
+                    return self.response(True, "There is no space available for this file.") 
 
                 dir["name"] = newName
                 dir["data"] = newData
                 dir["size"] = newFileLen
+
+                now = datetime.now()
+                dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+
+                dir["modificationDate"] = dt_string
                 
                 return self.response(False, dir)
 
-        return self.response(True, "El archivo no pudo ser encontrado.")
+        return self.response(True, "The file could not be found.")
