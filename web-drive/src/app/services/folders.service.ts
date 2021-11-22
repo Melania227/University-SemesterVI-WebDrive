@@ -22,9 +22,9 @@ export class FolderService {
     return this.http.post<CustomResponse>(`${this.URL_API}/close`, {"user": userName, "name": folderName});
   }
 
-  goToFolder(paths: string[]):Observable<CustomResponse>{
+  goToFolder(paths: string[], position: number):Observable<CustomResponse>{
     let userName = localStorage.getItem('user');
-    return this.http.post<CustomResponse>(`${this.URL_API}/goTo`, {"user": userName, "paths": paths});
+    return this.http.post<CustomResponse>(`${this.URL_API}/goTo`, {"user": userName, "paths": paths.slice(0, position+1)});
   }
 
   getCurrentFolder():Observable<CustomResponse>{
