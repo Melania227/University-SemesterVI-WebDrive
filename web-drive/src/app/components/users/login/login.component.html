@@ -1,0 +1,27 @@
+<div class="container" fxLayout="row" fxLayoutAlign="center stretch">
+    <div class="container sideImg" fxFlex="60%" fxLayoutAlign="center center">
+    </div>
+    <div class="container formSide" fxFlex="40%" fxLayoutAlign="center center">
+        <mat-card class="loginForm" fxLayoutAlign="center center" fxLayout="column">
+            <mat-card-title>LOGIN</mat-card-title>
+            <div class="container" fxLayoutAlign="center center" fxLayout="column">
+                <form [formGroup]="form" fxLayout="column" flex fxLayoutAlign="center center"
+                    ngClass.xs="form-xs"
+                    ngClass.gt-xs="form-gt-xs">
+                    <mat-form-field floatLabel="auto" appearance="outline" color="warn" fxFill>
+                        <mat-label>Username</mat-label>
+                        <input  
+                            #username
+                            matInput
+                            required
+                            formControlName = "username"
+                            [class.is-invalid] = "usernameInvalid">
+                            <mat-error align="end" *ngIf="usernameInvalid">Please, introduce your username</mat-error>
+                    </mat-form-field>
+                    <button mat-raised-button class="btnLogin" (click)="login()">Login</button>
+                </form>
+                <a href="/#/sign-up" class="tag">Create account</a>
+            </div>
+        </mat-card>
+    </div>
+</div>

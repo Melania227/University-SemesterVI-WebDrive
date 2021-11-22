@@ -1,0 +1,38 @@
+<app-navbar></app-navbar>
+<body fxLayoutAlign="center center">
+    <div class="container" fxLayoutAlign="center center">
+        <div class="container formSide" fxLayoutAlign="center center">
+            <mat-card class="loginForm" fxLayoutAlign="center center" fxLayout="column">
+                <mat-card-title>SIGN UP</mat-card-title>
+                <div class="container" fxLayoutAlign="center center" fxLayout="column" fxFill>
+                    <form [formGroup]="form" fxLayout="column" flex fxLayoutAlign="center center"
+                        ngClass.xs="form-xs"
+                        ngClass.gt-xs="form-gt-xs" fxFill>
+                        <mat-form-field floatLabel="auto" appearance="outline" color="warn" fxFill>
+                            <mat-label>Username</mat-label>
+                            <input  
+                                #username
+                                matInput
+                                required
+                                formControlName = "username"
+                                [class.is-invalid] = "usernameInvalid">
+                                <mat-error align="end" *ngIf="usernameInvalid">Please, introduce your username</mat-error>
+                        </mat-form-field>
+
+                        <mat-form-field floatLabel="auto" appearance="outline" color="warn" fxFill>
+                            <mat-label>Maxium size of drive in bytes</mat-label>
+                            <input  
+                                #username
+                                matInput
+                                required
+                                formControlName = "maxBytes"
+                                [class.is-invalid] = "maxBytesInvalid">
+                                <mat-error align="end" *ngIf="maxBytesInvalid">Please, introduce the maxium size</mat-error>
+                        </mat-form-field>
+                        <button mat-raised-button class="btnSignUp" (click)="signUp()">Sign Up</button>
+                    </form>
+                </div>
+            </mat-card>
+        </div>
+    </div>
+</body>
