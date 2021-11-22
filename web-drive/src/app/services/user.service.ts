@@ -14,13 +14,13 @@ export class UserService {
   constructor(private http:HttpClient) { }
 
 
-  createUser(user: User):Observable<CustomResponse>{
-    return this.http.post<CustomResponse>(this.URL_API, user)
+  createUser(userName: string, maxBytes: number):Observable<CustomResponse>{
+    return this.http.post<CustomResponse>(this.URL_API, {"user": userName, "maxBytes": maxBytes})
   }
 
 
   private getlogIn(userName: string):Observable<CustomResponse>{
-    return this.http.post<CustomResponse>(this.URL_API + "/logIn", {"user": userName})
+    return this.http.post<CustomResponse>(`this.URL_API}/logIn`, {"user": userName})
   }
 
   async logIn(userName: string): Promise<CustomResponse>{
