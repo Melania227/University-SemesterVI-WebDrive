@@ -91,7 +91,24 @@ class FileSystem:
         if (user in self.sessions):
             return self.response(False, self.sessions[user])
 
-        return self.response(True, "Este usuario no ah iniciado sesion.") 
+        return self.response(True, "Este usuario no ha iniciado sesion.") 
+
+    def cleanPaths(self, user):
+        if (user in self.sessions):
+            self.sessions[user] = []
+            return self.response(False, self.sessions[user])
+            
+        return self.response(True, "Este usuario no ha iniciado sesion.")     
+
+    def getCurrentStorage(self, user):
+        if(user in self.drives):
+            max = self.drives[user]["maxBytes"]
+            current = self.drives[user]["currentBytes"]
+            percentage = self.drives[user]["currentBytes"]/self.drives[user]["maxBytes"]
+            return self.response(False, {"maxBytes": max, "currentBytes": current, "percentage": percentage})
+        
+        return self.response(True, "Este usuario no está registrado.")
+
 
     #FileSystem Methods 
     def delete(self, user, name):
