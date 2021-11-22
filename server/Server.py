@@ -56,10 +56,10 @@ def getCurrentStorage():
 #FileSystem Routes
 
 #Folders Routes 
-@app.route('/folders/current', methods =['GET'])
+@app.route('/folders/current/', methods =['GET'])
 @cross_origin()
 def getCurrentFolder():
-    user = request.json.get("user")
+    user = request.args.get('user')
     return fileSystem.getCurrentFolder(user)
 
 @app.route('/folders', methods =['POST'])
@@ -69,11 +69,11 @@ def postFolder():
     name = request.json.get("name")
     return fileSystem.createFolder(user, name)
 
-@app.route('/folders', methods =['DELETE'])
+@app.route('/folders/', methods =['DELETE'])
 @cross_origin()
 def deleteFolder():
-    user = request.json.get("user")
-    name = request.json.get("name")
+    user = request.args.get('user')
+    name = request.args.get('name')
     return fileSystem.delete(user, name)
 
 @app.route('/folders', methods =['PATCH'])
@@ -101,7 +101,8 @@ def postCloseFolder():
 @cross_origin()
 def postGoToFolder():
     user = request.json.get("user")
-    return fileSystem.goToFolder(user)
+    paths = request.json.get("paths")
+    return fileSystem.goToFolder(user, paths)
 
 #Files Routes
 @app.route('/files', methods =['POST'])
