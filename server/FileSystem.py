@@ -1,4 +1,5 @@
 from os import path
+from datetime import datetime
 
 from DataModels import newDrive, newFolder, newFile
 
@@ -247,7 +248,10 @@ class FileSystem:
             if(dir["name"] == name):
                 return self.response(True, "Este directorio ya existe.")      
 
-        nFile = newFile(name, data, fileLen)
+        now = datetime.now()
+        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+
+        nFile = newFile(name, data, fileLen, dt_string)
         directories.append(nFile)
 
         return self.response(False, nFile)
@@ -281,6 +285,11 @@ class FileSystem:
                 dir["name"] = newName
                 dir["data"] = newData
                 dir["size"] = newFileLen
+
+                now = datetime.now()
+                dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+
+                dir["modificationDate"] = dt_string
                 
                 return self.response(False, dir)
 
