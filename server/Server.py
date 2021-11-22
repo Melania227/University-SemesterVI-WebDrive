@@ -43,13 +43,13 @@ def postLogout():
 
 @app.route('/users/cleanPaths', methods =['POST'])
 @cross_origin()
-def postLogout():
+def postCleanPaths():
     user = request.json.get("user")
     return fileSystem.cleanPaths(user)
 
 @app.route('/users/storage', methods =['GET'])
 @cross_origin()
-def postLogout():
+def getCurrentStorage():
     user = request.json.get("user")
     return fileSystem.getCurrentStorage(user)
 
@@ -96,6 +96,12 @@ def postOpenFolder():
 def postCloseFolder():
     user = request.json.get("user")
     return fileSystem.closeFolder(user)
+
+@app.route('/folders/goTo', methods =['POST'])
+@cross_origin()
+def postGoToFolder():
+    user = request.json.get("user")
+    return fileSystem.goToFolder(user)
 
 #Files Routes
 @app.route('/files', methods =['POST'])

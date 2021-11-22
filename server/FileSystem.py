@@ -176,6 +176,16 @@ class FileSystem:
 
         return folder
     
+    def goToFolder(self, user, paths):
+        
+        folder = self.getFolder(user, paths)
+        
+        if("error" in folder):
+            return folder        
+        
+        self.sessions[user] = paths
+        return folder
+
     def createFolder(self, user, name):
         paths = self.sessions[user]
         folder = self.getFolder(user, paths)
