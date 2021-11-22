@@ -17,11 +17,13 @@ def newFolder(name):
     }
     return folder
 
-def newFile(name, data, size):
+def newFile(name, data, size, dateTime):
     file = {
         "type": "file",
         "name" : name,
         "data" :  data,
-        "size" : size
+        "size" : size,
+        "creationDate": dateTime,
+        "modificationDate": dateTime
     }
     return file

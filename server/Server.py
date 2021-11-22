@@ -41,14 +41,25 @@ def postLogout():
     user = request.json.get("user")
     return fileSystem.logOut(user)
 
+@app.route('/users/cleanPaths', methods =['POST'])
+@cross_origin()
+def postCleanPaths():
+    user = request.json.get("user")
+    return fileSystem.cleanPaths(user)
+
+@app.route('/users/storage', methods =['GET'])
+@cross_origin()
+def getCurrentStorage():
+    user = request.json.get("user")
+    return fileSystem.getCurrentStorage(user)
 
 #FileSystem Routes
 
 #Folders Routes 
-@app.route('/folders/current', methods =['GET'])
+@app.route('/folders/current/', methods =['GET'])
 @cross_origin()
 def getCurrentFolder():
-    user = request.json.get("user")
+    user = request.args.get('user')
     return fileSystem.getCurrentFolder(user)
 
 @app.route('/folders', methods =['POST'])
@@ -58,11 +69,11 @@ def postFolder():
     name = request.json.get("name")
     return fileSystem.createFolder(user, name)
 
-@app.route('/folders', methods =['DELETE'])
+@app.route('/folders/', methods =['DELETE'])
 @cross_origin()
 def deleteFolder():
-    user = request.json.get("user")
-    name = request.json.get("name")
+    user = request.args.get('user')
+    name = request.args.get('name')
     return fileSystem.delete(user, name)
 
 @app.route('/folders', methods =['PATCH'])
@@ -86,6 +97,13 @@ def postCloseFolder():
     user = request.json.get("user")
     return fileSystem.closeFolder(user)
 
+@app.route('/folders/goTo', methods =['POST'])
+@cross_origin()
+def postGoToFolder():
+    user = request.json.get("user")
+    paths = request.json.get("paths")
+    return fileSystem.goToFolder(user, paths)
+
 #Files Routes
 @app.route('/files', methods =['POST'])
 @cross_origin()
@@ -98,15 +116,15 @@ def postFile():
 @app.route('/files', methods =['GET'])
 @cross_origin()
 def getFile():
-    user = request.json.get("user")
-    name = request.json.get("name")
+    user = request.args.get("user")
+    name = request.args.get("name")
     return fileSystem.openFile(user, name)
 
 @app.route('/files', methods =['DELETE'])
 @cross_origin()
 def deleteFile():
-    user = request.json.get("user")
-    name = request.json.get("name")
+    user = request.args.get("user")
+    name = request.args.get("name")
     return fileSystem.delete(user, name)
 
 @app.route('/files', methods =['PATCH'])
@@ -115,7 +133,6 @@ def updateFile():
     user = request.json.get("user")
     name = request.json.get("name")
     newName = request.json.get("newName")
-    data = request.json.get("data")
     newData = request.json.get("newData")
     return fileSystem.updateFile(user, name, newName, newData)
 
