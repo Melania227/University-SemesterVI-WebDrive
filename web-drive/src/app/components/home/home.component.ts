@@ -12,4 +12,12 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  openDrive(){
+    console.log("Open Drive")
+  }
+
+  openShared(){
+    console.log("Open Shared")
+  }
+
 }

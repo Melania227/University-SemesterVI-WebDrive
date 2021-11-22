@@ -6,6 +6,10 @@
 
 mat-toolbar{
     height: 100px;
+    background-color: white;
+    mat-divider{
+        width: 100%;
+    }
 }
 
 span{
