@@ -119,7 +119,6 @@ class FileSystem:
         if("error" in folder):
             return folder
 
-
         directories = folder["directories"]
         for dir in directories:
             if(dir["name"] == name):
@@ -194,7 +193,6 @@ class FileSystem:
         if("error" in folder):
             return folder
 
-
         directories = folder["directories"]
         for dir in directories:
             if(dir["name"] == name):
@@ -239,12 +237,12 @@ class FileSystem:
         return self.response(True, "The file cannot be found in the directory.")
 
     def creatFile(self, user, name, data):
-
-        fileLen = len(data)
-        self.drives[user]["currentBytes"] += fileLen
         
-        if(self.drives[user]["currentBytes"]>self.drives[user]["maxBytes"]):
-            self.drives[user]["currentBytes"] -= fileLen
+        fileLen = len(data)
+        driveCurrentBytes = self.drives[user]["currentBytes"]   
+        driveMaxBytes = self.drives[user]["maxBytes"]
+
+        if(driveCurrentBytes+fileLen > driveMaxBytes):
             return self.response(True, "There is no space available for this file.") 
         
         paths = self.sessions[user]
@@ -257,14 +255,24 @@ class FileSystem:
 
         for dir in directories:
             if(dir["name"] == name):
-                return self.response(True, "This directory already exists.")      
+                return self.response(True, "This file already exists.")      
 
         now = datetime.now()
         dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-
         nFile = newFile(name, data, fileLen, dt_string)
         directories.append(nFile)
 
+        self.drives[user]["currentBytes"] += fileLen
+        folder["size"] += fileLen
+
+        paths = paths.copy()
+        paths = paths[:-1] 
+        
+        while(paths != []):
+            folder = self.getFolder(user, paths)  
+            folder["size"] += fileLen
+            paths = paths[:-1] 
+            
         return self.response(False, nFile)
     
     def updateFile(self, user, name, newName, newData):
