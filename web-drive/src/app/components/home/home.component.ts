@@ -1,8 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { Folder } from 'src/app/models/folder.model';
 import { FilesService } from 'src/app/services/files.service';
 import { FolderService } from 'src/app/services/folders.service';
+import { EditFileComponent } from '../dialogs/edit-file/edit-file.component';
+import { OpenFileComponent } from '../dialogs/open-file/open-file.component';
 
 @Component({
   selector: 'app-home',
@@ -20,7 +23,8 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private readonly _folderService: FolderService,
-    private readonly _fileService: FilesService
+    private readonly _fileService: FilesService,
+    private _openDialog: MatDialog
   ) { }
 
   async ngOnInit():Promise<void> {
@@ -42,7 +46,12 @@ export class HomeComponent implements OnInit {
   }
 
   onContextMenuEdit(item: (File|Folder)) {
-    alert(`Edit ${item.name}`);
+    if (item.type!=="file"){
+      alert(`Edit name of ${item.name}`);
+    }
+    else{
+      alert(`Edit ${item.name}`);
+    }
   }
 
   onContextMenuCopy(item: (File|Folder)) {
@@ -65,18 +74,21 @@ export class HomeComponent implements OnInit {
     alert(`Create Folder`);
   }
 
-  async open(item: (File|Folder)){
-    if (item.type!=="file"){
-      this.folder = (await this._folderService.openFolder(item.name).toPromise()).response;
-      this.paths.push(item.name);
-    }
-    else{
-      this.openFile(item);
-    }
+  async editFile(item: File){
+    let info = (await this._fileService.getFile(item.name).toPromise()).response;
+    this._openDialog.open(EditFileComponent, {width: '1000px', height: '800px', data: info});
   }
 
-  async openFile(item: (File|Folder)){
-    alert((await this._fileService.getFile(item.name).toPromise()).response);
+  editFolder(item: File){}
+
+  async openFolder(item: Folder){
+    this.folder = (await this._folderService.openFolder(item.name).toPromise()).response;
+    this.paths.push(item.name);
+  }
+
+  async openFile(item: File){
+    let info = (await this._fileService.getFile(item.name).toPromise()).response;
+    this._openDialog.open(OpenFileComponent, {width: '1000px', height: '800px', data: info});
     //console.log((await this._fileService.getFile(item.name).toPromise()));
   }
 
@@ -98,6 +110,14 @@ export class HomeComponent implements OnInit {
 
   openShared(){
     console.log("Open Shared")
+  }
+
+  async navigate(path: string, index: number){
+    console.log(this.paths);
+    console.log(index);
+    this.folder = (await this._folderService.goToFolder(this.paths,index).toPromise()).response;
+    this.paths = this.paths.slice(0,index+1);
+    //this.paths = this.paths.length===0?["root"]:this.paths;
   }
 
 }
