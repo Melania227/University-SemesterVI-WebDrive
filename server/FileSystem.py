@@ -5,7 +5,7 @@ from DataModels import newDrive, newFolder, newFile
 
 class FileSystem:
     def __init__(self):
-        self.sessions = {"Velvet":["root","jose"]}
+        self.sessions = {"Velvet":[]}
         self.drives = {"Velvet": {
             "currentBytes": 24,
             "maxBytes": 100024,
@@ -28,7 +28,7 @@ class FileSystem:
                             {
                                 "type": "file",
                                 "name" : "text.txt",
-                                "data" :  "This is an example text.",
+                                "data" :  "Para terminar hay que subrayar que en el ámbito de \n la tecnología y, en concreto, en el de la informática se hace también un uso bastante extendido del término que estamos analizando.\n En concreto, se habla de lo que se conoce como procesador de textos que es un programa gracias al cual el usuario puede escribir en su ordenador diversos documentos. Word y OpenOffice Writer son \n los dos procesadores de este tipo más importantes y de uso más generalizado.",
                                 "size" : 24,
                                 "creationDate" : "22/11/2021 20:47:33",
                                 "modificationDate" : "22/11/2021 20:47:33"

@@ -40,15 +40,17 @@ export class LoginComponent implements OnInit {
     if (this.form.valid){
       let res:CustomResponse = (await this._userService.logIn(this.form.get("username")?.value));
       if(res.error){
-        console.log(res.response);
         this._snackBar.open(res.response, "Ok", {
           duration: 3000,
-          panelClass: ['custom-class'],
+          panelClass: ['error-class'],
         });
       }
       else{
-        //this._router.navigateByUrl(`invoices-list`);
-        console.log(res.response);
+        this._snackBar.open(res.response, "Ok", {
+          duration: 3000,
+          panelClass: ['success-class'],
+        });
+        this._router.navigateByUrl(`home`);
       }
     }
   }
