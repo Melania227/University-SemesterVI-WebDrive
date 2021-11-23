@@ -2,5 +2,7 @@ export interface File {
     type: string,
     name: string,
     size: number,
-    data: string
+    data: string,
+    creationDate: string,
+    modificationDate: string
 }
