@@ -5,7 +5,7 @@ from DataModels import newDrive, newFolder, newFile
 
 class FileSystem:
     def __init__(self):
-        self.sessions = {"Velvet":["root","jose"]}
+        self.sessions = {"Velvet":[]}
         self.drives = {"Velvet": {
             "currentBytes": 12,
             "maxBytes": 100,
@@ -164,7 +164,7 @@ class FileSystem:
             self.sessions[user] = self.sessions[user][:-1]
             return folder
 
-        return folder
+        return self.response(False, folder)
     
     def closeFolder(self, user):
         self.sessions[user] = self.sessions[user][:-1]

@@ -24,30 +24,30 @@
 
                 <div class="container topBar" fxLayout="row" fxLayoutAlign="start center">
                     <mat-card fxFill fxLayout="row">
-                        <div class="container navigate" fxLayout="row" fxLayoutGap="2px" fxLayoutAlign="start center">
-                            <a href="">Path 1</a>
-                            <mat-icon>navigate_next</mat-icon>
-                            <a href="">Path 2</a>
-                            <mat-icon>navigate_next</mat-icon>
-                            <a href="">Path 3</a>
-                            <mat-icon>navigate_next</mat-icon>
-                            <a href="">Path 4</a>
+                        <div class="container" fxLayout="column" fxLayoutAlign="center start" fxFlex="80%">
+                            <div class="container navigate" fxLayout="row" fxLayoutGap="2px" fxLayoutAlign="start center">
+                                <div *ngFor="let path of paths" fxLayout="row">
+                                    <mat-icon>navigate_next</mat-icon>
+                                    <a href="">{{path}}</a>
+                                </div>
+                            </div>
                         </div>
-
-                        <div class="container addBtn" fxLayoutAlign="end center">
-                            <button (click)="addFolder()" mat-mini-fab>
-                                <mat-icon>note_add</mat-icon>
-                            </button>
-                            <button (click)="addFile()" mat-mini-fab>
-                                <mat-icon>create_new_folder</mat-icon>
-                            </button>
+                        <div class="container" fxLayout="column" fxFlex="20%">
+                            <div class="container addBtn" fxLayoutAlign="end center">
+                                <button (click)="addFolder()" mat-mini-fab>
+                                    <mat-icon>note_add</mat-icon>
+                                </button>
+                                <button (click)="addFile()" mat-mini-fab>
+                                    <mat-icon>create_new_folder</mat-icon>
+                                </button>
+                            </div>
                         </div>
                     </mat-card>
                 </div>
 
                 <div class="container files">
                     <div class="container" fxLayout="row" fxLayoutGap="30px">
-                        <mat-card *ngFor="let item of items" fxLayout="column" fxLayoutAlign="center center" (click)="open(item)" (contextmenu)="onContextMenu($event, item)">
+                        <mat-card *ngFor="let item of folder.directories" fxLayout="column" fxLayoutAlign="center center" (click)="open(item)" (contextmenu)="onContextMenu($event, item)">
                             <mat-icon *ngIf="item.type==='folder'">folder</mat-icon>
                             <mat-icon *ngIf="item.type==='file'">description</mat-icon>
                             <p>{{ item.name }}</p>

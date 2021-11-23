@@ -1,5 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
+import { Folder } from 'src/app/models/folder.model';
+import { FilesService } from 'src/app/services/files.service';
+import { FolderService } from 'src/app/services/folders.service';
 
 @Component({
   selector: 'app-home',
@@ -8,36 +11,24 @@ import { MatMenuTrigger } from '@angular/material/menu';
 })
 export class HomeComponent implements OnInit {
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
-  openDrive(){
-    console.log("Open Drive")
-  }
-
-  openShared(){
-    console.log("Open Shared")
-  }
-
-  items = [
-    {id: 1, name: 'Item 1', type: 'file'},
-    {id: 2, name: 'Item 2', type: 'file'},
-    {id: 3, name: 'Item 3', type: 'file'},
-    {id: 4, name: 'Item 4', type: 'folder'},
-    {id: 5, name: 'Item 5', type: 'file'},
-    {id: 6, name: 'Item 6', type: 'file'},
-    {id: 7, name: 'Item 7', type: 'folder'},
-    {id: 8, name: 'Item 8', type: 'file'},
-    {id: 9, name: 'Item 9', type: 'folder'}
-  ];
+  folder!: any;
+  paths: string[]=[];
 
   @ViewChild(MatMenuTrigger) contextMenu!: MatMenuTrigger;
 
   contextMenuPosition = { x: '0px', y: '0px' };
 
-  onContextMenu(event: MouseEvent, item: Item) {
+  constructor(
+    private readonly _folderService: FolderService,
+    private readonly _fileService: FilesService
+  ) { }
+
+  async ngOnInit():Promise<void> {
+    this.folder = (await this._folderService.openFolder('root').toPromise()).response;
+    this.paths.push('root');
+  }
+
+  onContextMenu(event: MouseEvent, item: (File|Folder)) {
     event.preventDefault();
     this.contextMenuPosition.x = event.clientX + 'px';
     this.contextMenuPosition.y = event.clientY + 'px';
@@ -46,23 +37,23 @@ export class HomeComponent implements OnInit {
     this.contextMenu.openMenu();
   }
 
-  onContextMenuOpen(item: Item) {
+  onContextMenuOpen(item: (File|Folder)) {
     alert(`Open ${item.name}`);
   }
 
-  onContextMenuEdit(item: Item) {
+  onContextMenuEdit(item: (File|Folder)) {
     alert(`Edit ${item.name}`);
   }
 
-  onContextMenuCopy(item: Item) {
+  onContextMenuCopy(item: (File|Folder)) {
     alert(`Copy ${item.name}`);
   }
 
-  onContextMenuMove(item: Item) {
+  onContextMenuMove(item: (File|Folder)) {
     alert(`Move ${item.name}`);
   }
 
-  onContextMenuShare(item: Item){
+  onContextMenuShare(item: (File|Folder)){
     alert(`Share ${item.name}`);
   }
 
@@ -74,8 +65,19 @@ export class HomeComponent implements OnInit {
     alert(`Create Folder`);
   }
 
-  open(item: Item){
-    alert(`Open ${item.name}`);
+  async open(item: (File|Folder)){
+    if (item.type!=="file"){
+      this.folder = (await this._folderService.openFolder(item.name).toPromise()).response;
+      this.paths.push(item.name);
+    }
+    else{
+      this.openFile(item);
+    }
+  }
+
+  async openFile(item: (File|Folder)){
+    alert((await this._fileService.getFile(item.name).toPromise()).response);
+    //console.log((await this._fileService.getFile(item.name).toPromise()));
   }
 
   openOnMouseOver() {
@@ -90,10 +92,12 @@ export class HomeComponent implements OnInit {
     console.log("addFile");
   }
 
-}
+  openDrive(){
+    console.log("Open Drive")
+  }
 
-export interface Item {
-  id: number;
-  name: string;
-  type: string;
+  openShared(){
+    console.log("Open Shared")
+  }
+
 }
