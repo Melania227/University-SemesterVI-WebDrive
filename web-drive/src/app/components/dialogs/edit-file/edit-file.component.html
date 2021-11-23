@@ -27,7 +27,7 @@
                 <mat-error align="end" *ngIf="contentInvalid">Favor introducir el contenido del archivo</mat-error>
         </mat-form-field>
         <div class="container" fxLayoutAlign="end end" fxFill>
-            <button mat-raised-button [mat-dialog-close]="" (click)="editFile()">Editar Archivo</button>
+            <button mat-raised-button [mat-dialog-close]="{'name': form.get('name')?.value, 'content': form.get('content')?.value}">Editar Archivo</button>
         </div>
     </form>
 </body>

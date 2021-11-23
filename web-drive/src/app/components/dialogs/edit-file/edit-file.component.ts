@@ -44,22 +44,4 @@ export class EditFileComponent implements OnInit {
     )
   }
 
-  async editFile(){
-    let res = (await this._fileService.updateFile(this.data.name, this.form.get("name")?.value, this.form.get("content")?.value).toPromise());
-    if(res.error){
-      console.log(res.response)
-      this._snackBar.open(res.response, "Ok", {
-        duration: 3000,
-        panelClass: ['error-class'],
-      });
-    }
-    else{
-      console.log(res.response)
-      this._snackBar.open(res.response, "Ok", {
-        duration: 3000,
-        panelClass: ['success-class'],
-      });
-    }
-  }
-
 }

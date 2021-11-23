@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger } from '@angular/material/menu';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Folder } from 'src/app/models/folder.model';
 import { FilesService } from 'src/app/services/files.service';
 import { FolderService } from 'src/app/services/folders.service';
@@ -24,7 +25,8 @@ export class HomeComponent implements OnInit {
   constructor(
     private readonly _folderService: FolderService,
     private readonly _fileService: FilesService,
-    private _openDialog: MatDialog
+    private _openDialog: MatDialog,
+    private _snackBar: MatSnackBar
   ) { }
 
   async ngOnInit():Promise<void> {
@@ -76,7 +78,23 @@ export class HomeComponent implements OnInit {
 
   async editFile(item: File){
     let info = (await this._fileService.getFile(item.name).toPromise()).response;
-    this._openDialog.open(EditFileComponent, {width: '1000px', height: '800px', data: info});
+    let done = this._openDialog.open(EditFileComponent, {width: '1000px', height: '800px', data: info}).afterClosed();
+    done.subscribe(async (res)=>{
+      let res2 = (await this._fileService.updateFile(item.name, res.name, res.content).toPromise());
+      if(res2.error){
+        this._snackBar.open(res2.response, "Ok", {
+          duration: 3000,
+          panelClass: ['error-class'],
+        });
+      }
+      else{
+        this.folder = (await this._folderService.getCurrentFolder().toPromise()).response;
+        this._snackBar.open(res2.response, "Ok", {
+          duration: 3000,
+          panelClass: ['success-class'],
+        });
+      }
+    })
   }
 
   editFolder(item: File){}
