@@ -113,14 +113,14 @@ def postFile():
     data = request.json.get("data")
     return fileSystem.creatFile(user, name, data)
 
-@app.route('/files', methods =['GET'])
+@app.route('/files/', methods =['GET'])
 @cross_origin()
 def getFile():
     user = request.args.get("user")
     name = request.args.get("name")
     return fileSystem.openFile(user, name)
 
-@app.route('/files', methods =['DELETE'])
+@app.route('/files/', methods =['DELETE'])
 @cross_origin()
 def deleteFile():
     user = request.args.get("user")
