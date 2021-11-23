@@ -13,7 +13,9 @@ def newFolder(name):
     folder = {
         "type": "folder",
         "name": name,
-        "directories": []
+        "directories": [],
+        "size" : 0
+
     }
     return folder
 

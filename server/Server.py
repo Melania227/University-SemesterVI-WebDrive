@@ -18,8 +18,7 @@ def postUser():
 @app.route('/users', methods =['GET'])
 @cross_origin()
 def getUsersList():
-    user = request.json.get("user")
-    return {"sesions":fileSystem.sessions, "drives":fileSystem.drives}
+    return fileSystem.listUsers()
 
 @app.route('/users/paths', methods =['GET'])
 @cross_origin()
@@ -47,10 +46,10 @@ def postCleanPaths():
     user = request.json.get("user")
     return fileSystem.cleanPaths(user)
 
-@app.route('/users/storage', methods =['GET'])
+@app.route('/users/storage/', methods =['GET'])
 @cross_origin()
 def getCurrentStorage():
-    user = request.json.get("user")
+    user = request.args.get("user")
     return fileSystem.getCurrentStorage(user)
 
 #FileSystem Routes
@@ -83,6 +82,14 @@ def updateFolder():
     name = request.json.get("name")
     newName = request.json.get("newName")
     return fileSystem.updateFolder(user, name, newName)
+
+@app.route('/folders/share', methods =['POST'])
+@cross_origin()
+def shareFolder():
+    user = request.json.get("user")
+    name = request.json.get("name")
+    shareWith = request.json.get("shareWith")
+    return fileSystem.share(user, name, shareWith)
 
 @app.route('/folders/open', methods =['POST'])
 @cross_origin()
@@ -136,7 +143,14 @@ def updateFile():
     newData = request.json.get("newData")
     return fileSystem.updateFile(user, name, newName, newData)
 
+@app.route('/files/share', methods =['POST'])
+@cross_origin()
+def shareFile():
+    user = request.json.get("user")
+    name = request.json.get("name")
+    shareWith = request.json.get("shareWith")
+    return fileSystem.share(user, name, shareWith)
 
 #Main
 if __name__ == "__main__":
-    app.run(host="localhost", port=8000, debug = True)
+    app.run(host="localhost", port=8000)
