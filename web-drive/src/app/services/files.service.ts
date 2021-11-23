@@ -31,4 +31,9 @@ export class FilesService {
     let userName = localStorage.getItem('user');
     return this.http.patch<CustomResponse>(this.URL_API, {"user": userName, "name": originalName, "newName": newName, "newData": newData});
   }
+
+  shareFile(folderName: string, shareWith: string):Observable<CustomResponse>{
+    let userName = localStorage.getItem('user');
+    return this.http.post<CustomResponse>(`${this.URL_API}/share`, {"user": userName, "name": folderName, "shareWith": shareWith});
+  }
 }

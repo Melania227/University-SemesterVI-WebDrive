@@ -37,4 +37,14 @@ export class UserService {
   logOut(){
     localStorage.removeItem('user');
   }
+
+  cleanPaths():Observable<CustomResponse>{
+    let userName = localStorage.getItem('user');
+    return this.http.post<CustomResponse>(`${this.URL_API}/cleanPaths`, {"user": userName})
+  }
+
+  getCurrentStorage():Observable<CustomResponse>{
+    let userName = localStorage.getItem('user');
+    return this.http.get<CustomResponse>(`${this.URL_API}/storage/?user=${userName}`);
+  }
 }
