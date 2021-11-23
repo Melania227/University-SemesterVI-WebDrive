@@ -164,7 +164,7 @@ class FileSystem:
             self.sessions[user] = self.sessions[user][:-1]
             return folder
 
-        return folder
+        return self.response(False, folder)
     
     def closeFolder(self, user):
         self.sessions[user] = self.sessions[user][:-1]
@@ -174,7 +174,7 @@ class FileSystem:
         if("error" in folder):
             return folder
 
-        return folder
+        return self.response(False, folder)
     
     def goToFolder(self, user, paths):
         
@@ -184,7 +184,7 @@ class FileSystem:
             return folder        
         
         self.sessions[user] = paths
-        return folder
+        return self.response(False, folder)
 
     def createFolder(self, user, name):
         paths = self.sessions[user]
