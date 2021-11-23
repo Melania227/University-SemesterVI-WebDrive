@@ -80,7 +80,7 @@ class FileSystem:
         
         self.sessions[user] = []
 
-        return self.response(False, "User logged In.")
+        return self.response(False, "User logged in.")
 
     def logOut(self, user):
         if (user in self.sessions):

@@ -1,0 +1,71 @@
+body{
+    background-color: tan;
+    mat-card{
+        min-width: 500px !important;
+    }
+}
+
+
+.formSide{
+    //background-color: slategrey;
+    //background-color: papayawhip;
+    //background-color: moccasin;
+    min-height: 100% !important;
+    .loginForm{
+        min-width: 60%;
+    }
+    mat-card-title{
+        padding: 30px;
+        color: #01443C;
+        font-size: 40px;
+    }
+    
+    .tag{
+        padding: 20px;
+        padding-top: 30px;
+        color: #01443C;
+        font-size: 15px;
+        font-weight: 500;
+        text-decoration:none;
+    }
+    .btnSignUp{
+        color: white;
+        background-color: #01443C;
+        margin-bottom: 15px;
+    }
+
+    ::ng-deep{
+        mat-form-field {
+        &.ng-invalid,
+        &.mat-form-field-invalid {
+          .mat-form-field-wrapper {
+            padding-bottom: 7px;
+          }
+        }
+      
+        .mat-form-field {
+          &-underline {
+            position: static;
+          }
+      
+          &-subscript-wrapper {
+            position: static;
+          }
+        }
+      }
+    }
+
+    form{
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+}
+
+
+::ng-deep snack-bar-container.custom-class {
+  background: #ce413f;
+  color: white;
+  button{
+    color: white;
+  }
+}
