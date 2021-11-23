@@ -15,7 +15,6 @@ import { MaterialModule } from './material/material.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OpenFileComponent } from './components/dialogs/open-file/open-file.component';
-import { EditNameComponent } from './components/dialogs/edit-name/edit-name.component';
 import { EditFileComponent } from './components/dialogs/edit-file/edit-file.component';
 
 @NgModule({
@@ -27,7 +26,6 @@ import { EditFileComponent } from './components/dialogs/edit-file/edit-file.comp
     NavbarComponent,
     SidebarComponent,
     OpenFileComponent,
-    EditNameComponent,
     EditFileComponent
   ],
   imports: [
