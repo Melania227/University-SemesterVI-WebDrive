@@ -121,6 +121,9 @@ class FileSystem:
         
         return self.response(True, "This user is not registered.")
 
+    def listUsers(self):
+        return self.response(False, self.drives.keys())
+
     #FileSystem Methods 
     def delete(self, user, name):
         paths = self.sessions[user]
@@ -151,6 +154,36 @@ class FileSystem:
                 else:
                     return self.response(False, "The directory was deleted successfully.")
         
+        return self.response(True, "It could not be found.")  
+
+    def share(self, user, name, shareWith):
+        pathsUser = self.sessions[user]
+        folder = self.getFolder(user, pathsUser)
+        
+        if("error" in folder):
+            return folder      
+
+        directories = folder["directories"]
+        for dir in directories:
+            if(dir["name"] == name):
+
+                if(not shareWith in self.drives):
+                    return self.response(True, "The user you want to share to does not have a drive.")
+
+                if(self.drives[shareWith]["currentBytes"]+dir["size"] > self.drives[shareWith]["maxBytes"]):
+                   return self.response(True, "This user does not have enough space.")                 
+                
+                folderShared = self.getFolder(shareWith, ["shared"])
+                
+                folderShared["directories"].append(dir.copy())
+                folderShared["directories"]["size"] += dir["size"]
+                self.drives[shareWith]["currentBytes"] += dir["size"]
+
+                if(dir["type"] == "file"):
+                    return self.response(False, "The file was shared successfully.")
+                else:
+                    return self.response(False, "The directory was sahred successfully.")
+
         return self.response(True, "It could not be found.")  
 
     #Folders Methods 
