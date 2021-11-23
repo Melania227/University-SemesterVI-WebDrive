@@ -128,10 +128,11 @@ class FileSystem:
                 #If is a file free memory
                 if(dir["type"] == "file"):
                     self.drives[user]["currentBytes"] -= dir["size"]
-                
-                return self.response(False, dir)
-
-        return self.response(True, "It could not be found.")
+                    return self.response(False, "The file was deleted successfully.")
+                else:
+                    return self.response(False, "The directory was deleted successfully.")
+        
+        return self.response(True, "It could not be found.")  
 
     #Folders Methods 
     def getFolder(self, user, paths):
@@ -216,7 +217,7 @@ class FileSystem:
         for dir in directories:
             if(dir["name"] == name):
                 dir["name"] = newName
-                return self.response(False, "The directory was successfully edited")
+                return self.response(False, "The directory was successfully edited.")
 
         return self.response(True, "The directory could not be found.")
 
