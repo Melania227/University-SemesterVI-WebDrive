@@ -7,8 +7,8 @@ class FileSystem:
     def __init__(self):
         self.sessions = {"Velvet":["root","jose"]}
         self.drives = {"Velvet": {
-            "currentBytes": 12,
-            "maxBytes": 100,
+            "currentBytes": 24,
+            "maxBytes": 100024,
             "root": {
                 "directories": [
                     {
@@ -16,47 +16,57 @@ class FileSystem:
                             {
                                 "directories": [],
                                 "name": "jose1",
-                                "type": "folder"
+                                "type": "folder",
+                                "size": 0
                             },
                             {
                                 "directories": [],
                                 "name": "jose2",
-                                "type": "folder"
+                                "type": "folder",
+                                "size": 0
                             },
                             {
                                 "type": "file",
                                 "name" : "text.txt",
                                 "data" :  "This is an example text.",
-                                "size" : 24
+                                "size" : 24,
+                                "creationDate" : "22/11/2021 20:47:33",
+                                "modificationDate" : "22/11/2021 20:47:33"
                             }
                         ],
                         "name": "jose",
-                        "type": "folder"
+                        "type": "folder",
+                        "size": 24
                     },
                     {
                         "directories": [
                             {
                                 "directories": [],
                                 "name": "mela1",
-                                "type": "folder"
+                                "type": "folder",
+                                "size": 0
                             },
                             {
                                 "directories": [],
                                 "name": "mela2",
-                                "type": "folder"
+                                "type": "folder",
+                                "size": 0
                             }
                         ],
                         "name": "mela",
-                        "type": "folder"
+                        "type": "folder",
+                        "size": 0
                     }
                 ],
                 "name": "root",
-                "type": "folder"
+                "type": "folder",
+                "size": 24
             },
             "shared": {
                 "directories": [],
                 "name": "shared",
-                "type": "folder"
+                "type": "folder",
+                "size": 0
             }
         }
     }
@@ -88,6 +98,7 @@ class FileSystem:
 
         return self.response(False, "User logged Out.")
 
+    #User methods
     def getCurrentPaths(self, user):
         if (user in self.sessions):
             return self.response(False, self.sessions[user])
@@ -110,7 +121,6 @@ class FileSystem:
         
         return self.response(True, "This user is not registered.")
 
-
     #FileSystem Methods 
     def delete(self, user, name):
         paths = self.sessions[user]
@@ -123,10 +133,20 @@ class FileSystem:
         for dir in directories:
             if(dir["name"] == name):
                 directories.remove(dir)
+            
+                fileLen = dir["size"]
+                self.drives[user]["currentBytes"] -= fileLen
+                folder["size"] -= fileLen
 
-                #If is a file free memory
+                paths = paths.copy()
+                paths = paths[:-1] 
+                
+                while(paths != []):
+                    folder = self.getFolder(user, paths)  
+                    folder["size"] -= fileLen
+                    paths = paths[:-1] 
+
                 if(dir["type"] == "file"):
-                    self.drives[user]["currentBytes"] -= dir["size"]
                     return self.response(False, "The file was deleted successfully.")
                 else:
                     return self.response(False, "The directory was deleted successfully.")
