@@ -121,8 +121,9 @@ class FileSystem:
         
         return self.response(True, "This user is not registered.")
 
-    def listUsers(self):
-        return self.response(False, self.drives.keys())
+    def listUsers(self, user):
+        users = list(self.drives).remove(user)
+        return self.response(False, users)
 
     #FileSystem Methods 
     def delete(self, user, name):
@@ -206,7 +207,7 @@ class FileSystem:
 
     def getCurrentFolder(self, user):
         paths = self.sessions[user]
-        return self.getFolder(user, paths)
+        return self.response(False, self.getFolder(user, paths))
 
     def openFolder(self, user, name):
         self.sessions[user].append(name)

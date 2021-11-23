@@ -15,10 +15,11 @@ def postUser():
     maxBytes = request.json.get("maxBytes")
     return fileSystem.signUp(user, maxBytes)
 
-@app.route('/users', methods =['GET'])
+@app.route('/users/', methods =['GET'])
 @cross_origin()
 def getUsersList():
-    return fileSystem.listUsers()
+    user = request.args.get("user")
+    return fileSystem.listUsers(user)
 
 @app.route('/users/paths', methods =['GET'])
 @cross_origin()
