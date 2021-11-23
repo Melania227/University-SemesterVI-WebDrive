@@ -207,7 +207,7 @@ class FileSystem:
 
     def getCurrentFolder(self, user):
         paths = self.sessions[user]
-        return self.getFolder(user, paths)
+        return self.response(False, self.getFolder(user, paths))
 
     def openFolder(self, user, name):
         self.sessions[user].append(name)
