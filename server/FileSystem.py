@@ -7,8 +7,8 @@ class FileSystem:
     def __init__(self):
         self.sessions = {"Velvet":["root","jose"]}
         self.drives = {"Velvet": {
-            "currentBytes": 12,
-            "maxBytes": 100,
+            "currentBytes": 24,
+            "maxBytes": 100024,
             "root": {
                 "directories": [
                     {
@@ -16,47 +16,57 @@ class FileSystem:
                             {
                                 "directories": [],
                                 "name": "jose1",
-                                "type": "folder"
+                                "type": "folder",
+                                "size": 0
                             },
                             {
                                 "directories": [],
                                 "name": "jose2",
-                                "type": "folder"
+                                "type": "folder",
+                                "size": 0
                             },
                             {
                                 "type": "file",
                                 "name" : "text.txt",
                                 "data" :  "This is an example text.",
-                                "size" : 24
+                                "size" : 24,
+                                "creationDate" : "22/11/2021 20:47:33",
+                                "modificationDate" : "22/11/2021 20:47:33"
                             }
                         ],
                         "name": "jose",
-                        "type": "folder"
+                        "type": "folder",
+                        "size": 24
                     },
                     {
                         "directories": [
                             {
                                 "directories": [],
                                 "name": "mela1",
-                                "type": "folder"
+                                "type": "folder",
+                                "size": 0
                             },
                             {
                                 "directories": [],
                                 "name": "mela2",
-                                "type": "folder"
+                                "type": "folder",
+                                "size": 0
                             }
                         ],
                         "name": "mela",
-                        "type": "folder"
+                        "type": "folder",
+                        "size": 0
                     }
                 ],
                 "name": "root",
-                "type": "folder"
+                "type": "folder",
+                "size": 24
             },
             "shared": {
                 "directories": [],
                 "name": "shared",
-                "type": "folder"
+                "type": "folder",
+                "size": 0
             }
         }
     }
@@ -88,6 +98,7 @@ class FileSystem:
 
         return self.response(False, "User logged Out.")
 
+    #User methods
     def getCurrentPaths(self, user):
         if (user in self.sessions):
             return self.response(False, self.sessions[user])
@@ -110,6 +121,8 @@ class FileSystem:
         
         return self.response(True, "This user is not registered.")
 
+    def listUsers(self):
+        return self.response(False, self.drives.keys())
 
     #FileSystem Methods 
     def delete(self, user, name):
@@ -119,19 +132,59 @@ class FileSystem:
         if("error" in folder):
             return folder
 
-
         directories = folder["directories"]
         for dir in directories:
             if(dir["name"] == name):
                 directories.remove(dir)
+            
+                fileLen = dir["size"]
+                self.drives[user]["currentBytes"] -= fileLen
+                folder["size"] -= fileLen
 
-                #If is a file free memory
-                if(dir["type"] == "file"):
-                    self.drives[user]["currentBytes"] -= dir["size"]
+                paths = paths.copy()
+                paths = paths[:-1] 
                 
-                return self.response(False, dir)
+                while(paths != []):
+                    folder = self.getFolder(user, paths)  
+                    folder["size"] -= fileLen
+                    paths = paths[:-1] 
 
-        return self.response(True, "It could not be found.")
+                if(dir["type"] == "file"):
+                    return self.response(False, "The file was deleted successfully.")
+                else:
+                    return self.response(False, "The directory was deleted successfully.")
+        
+        return self.response(True, "It could not be found.")  
+
+    def share(self, user, name, shareWith):
+        pathsUser = self.sessions[user]
+        folder = self.getFolder(user, pathsUser)
+        
+        if("error" in folder):
+            return folder      
+
+        directories = folder["directories"]
+        for dir in directories:
+            if(dir["name"] == name):
+
+                if(not shareWith in self.drives):
+                    return self.response(True, "The user you want to share to does not have a drive.")
+
+                if(self.drives[shareWith]["currentBytes"]+dir["size"] > self.drives[shareWith]["maxBytes"]):
+                   return self.response(True, "This user does not have enough space.")                 
+                
+                folderShared = self.getFolder(shareWith, ["shared"])
+                
+                folderShared["directories"].append(dir.copy())
+                folderShared["directories"]["size"] += dir["size"]
+                self.drives[shareWith]["currentBytes"] += dir["size"]
+
+                if(dir["type"] == "file"):
+                    return self.response(False, "The file was shared successfully.")
+                else:
+                    return self.response(False, "The directory was sahred successfully.")
+
+        return self.response(True, "It could not be found.")  
 
     #Folders Methods 
     def getFolder(self, user, paths):
@@ -193,7 +246,6 @@ class FileSystem:
         if("error" in folder):
             return folder
 
-
         directories = folder["directories"]
         for dir in directories:
             if(dir["name"] == name):
@@ -216,7 +268,7 @@ class FileSystem:
         for dir in directories:
             if(dir["name"] == name):
                 dir["name"] = newName
-                return self.response(False, "The directory was successfully edited")
+                return self.response(False, "The directory was successfully edited.")
 
         return self.response(True, "The directory could not be found.")
 
@@ -238,12 +290,12 @@ class FileSystem:
         return self.response(True, "The file cannot be found in the directory.")
 
     def creatFile(self, user, name, data):
-
-        fileLen = len(data)
-        self.drives[user]["currentBytes"] += fileLen
         
-        if(self.drives[user]["currentBytes"]>self.drives[user]["maxBytes"]):
-            self.drives[user]["currentBytes"] -= fileLen
+        fileLen = len(data)
+        driveCurrentBytes = self.drives[user]["currentBytes"]   
+        driveMaxBytes = self.drives[user]["maxBytes"]
+
+        if(driveCurrentBytes+fileLen > driveMaxBytes):
             return self.response(True, "There is no space available for this file.") 
         
         paths = self.sessions[user]
@@ -256,14 +308,24 @@ class FileSystem:
 
         for dir in directories:
             if(dir["name"] == name):
-                return self.response(True, "This directory already exists.")      
+                return self.response(True, "This file already exists.")      
 
         now = datetime.now()
         dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-
         nFile = newFile(name, data, fileLen, dt_string)
         directories.append(nFile)
 
+        self.drives[user]["currentBytes"] += fileLen
+        folder["size"] += fileLen
+
+        paths = paths.copy()
+        paths = paths[:-1] 
+        
+        while(paths != []):
+            folder = self.getFolder(user, paths)  
+            folder["size"] += fileLen
+            paths = paths[:-1] 
+            
         return self.response(False, nFile)
     
     def updateFile(self, user, name, newName, newData):
