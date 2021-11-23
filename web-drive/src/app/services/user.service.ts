@@ -47,4 +47,8 @@ export class UserService {
     let userName = localStorage.getItem('user');
     return this.http.get<CustomResponse>(`${this.URL_API}/storage/?user=${userName}`);
   }
+
+  getUsers():Observable<CustomResponse>{
+    return this.http.get<CustomResponse>(`${this.URL_API}`);
+  }
 }
