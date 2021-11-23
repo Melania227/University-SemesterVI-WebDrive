@@ -216,7 +216,7 @@ class FileSystem:
         for dir in directories:
             if(dir["name"] == name):
                 dir["name"] = newName
-                return self.response(False, dir)
+                return self.response(False, "The directory was successfully edited")
 
         return self.response(True, "The directory could not be found.")
 
@@ -301,6 +301,6 @@ class FileSystem:
 
                 dir["modificationDate"] = dt_string
                 
-                return self.response(False, dir)
+                return self.response(False, "The file was successfully edited.")
 
         return self.response(True, "The file could not be found.")
