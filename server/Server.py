@@ -46,10 +46,10 @@ def postCleanPaths():
     user = request.json.get("user")
     return fileSystem.cleanPaths(user)
 
-@app.route('/users/storage', methods =['GET'])
+@app.route('/users/storage/', methods =['GET'])
 @cross_origin()
 def getCurrentStorage():
-    user = request.json.get("user")
+    user = request.args.get("user")
     return fileSystem.getCurrentStorage(user)
 
 #FileSystem Routes
