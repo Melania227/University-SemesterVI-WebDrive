@@ -19,6 +19,7 @@ import { EditFileComponent } from './components/dialogs/edit-file/edit-file.comp
 import { EditFolderComponent } from './components/dialogs/edit-folder/edit-folder.component';
 import { CreateFolderComponent } from './components/dialogs/create-folder/create-folder.component';
 import { CreateFileComponent } from './components/dialogs/create-file/create-file.component';
+import { ChooseSharedComponent } from './components/dialogs/choose-shared/choose-shared.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { CreateFileComponent } from './components/dialogs/create-file/create-fil
     EditFileComponent,
     EditFolderComponent,
     CreateFolderComponent,
-    CreateFileComponent
+    CreateFileComponent,
+    ChooseSharedComponent
   ],
   imports: [
     BrowserModule,

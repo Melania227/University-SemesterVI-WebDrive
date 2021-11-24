@@ -11,6 +11,7 @@ import { EditFolderComponent } from '../dialogs/edit-folder/edit-folder.componen
 import { OpenFileComponent } from '../dialogs/open-file/open-file.component';
 import { CreateFileComponent } from '../dialogs/create-file/create-file.component';
 import { UserService } from 'src/app/services/user.service';
+import { ChooseSharedComponent } from '../dialogs/choose-shared/choose-shared.component';
 
 @Component({
   selector: 'app-home',
@@ -77,7 +78,23 @@ export class HomeComponent implements OnInit {
   }
 
   onContextMenuShare(item: (File|Folder)){
-    alert(`Share ${item.name}`);
+    let done = this._openDialog.open(ChooseSharedComponent, {width: '1000px'}).afterClosed();
+    done.subscribe(async (res)=>{
+      let res2 = item.type==='file'?(await this._fileService.shareFile(item.name,res.user).toPromise()):(await this._folderService.shareFolder(item.name,res.user).toPromise());
+      if(res2.error){
+        this._snackBar.open(res2.response, "Ok", {
+          duration: 3000,
+          panelClass: ['error-class'],
+        });
+      }
+      else{
+        this.folder = (await this._folderService.getCurrentFolder().toPromise()).response;
+        this._snackBar.open(res2.response, "Ok", {
+          duration: 3000,
+          panelClass: ['success-class'],
+        });
+      }
+    });
   }
 
   onContextMenuAddFile(){
