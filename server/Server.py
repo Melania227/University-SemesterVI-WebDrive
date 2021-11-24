@@ -15,10 +15,11 @@ def postUser():
     maxBytes = request.json.get("maxBytes")
     return fileSystem.signUp(user, maxBytes)
 
-@app.route('/users', methods =['GET'])
+@app.route('/users/', methods =['GET'])
 @cross_origin()
 def getUsersList():
-    return fileSystem.listUsers()
+    user = request.args.get("user")
+    return fileSystem.listUsers(user)
 
 @app.route('/users/paths', methods =['GET'])
 @cross_origin()
@@ -46,10 +47,10 @@ def postCleanPaths():
     user = request.json.get("user")
     return fileSystem.cleanPaths(user)
 
-@app.route('/users/storage', methods =['GET'])
+@app.route('/users/storage/', methods =['GET'])
 @cross_origin()
 def getCurrentStorage():
-    user = request.json.get("user")
+    user = request.args.get("user")
     return fileSystem.getCurrentStorage(user)
 
 #FileSystem Routes
