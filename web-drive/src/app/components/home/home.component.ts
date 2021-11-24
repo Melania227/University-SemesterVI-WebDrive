@@ -10,6 +10,7 @@ import { EditFileComponent } from '../dialogs/edit-file/edit-file.component';
 import { EditFolderComponent } from '../dialogs/edit-folder/edit-folder.component';
 import { OpenFileComponent } from '../dialogs/open-file/open-file.component';
 import { CreateFileComponent } from '../dialogs/create-file/create-file.component';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-home',
@@ -28,6 +29,7 @@ export class HomeComponent implements OnInit {
   constructor(
     private readonly _folderService: FolderService,
     private readonly _fileService: FilesService,
+    private readonly _userService: UserService,
     private _openDialog: MatDialog,
     private _snackBar: MatSnackBar
   ) { }
@@ -47,8 +49,14 @@ export class HomeComponent implements OnInit {
   }
 
   async onContextMenuOpen(item: (File|Folder)) {
-    let info = (await this._fileService.getFile(item.name).toPromise()).response;
-    this._openDialog.open(OpenFileComponent, {width: '1000px', data: info});
+    if(item.type==="file"){
+      let info = (await this._fileService.getFile(item.name).toPromise()).response;
+      this._openDialog.open(OpenFileComponent, {width: '1000px', data: info});
+    }
+    else{
+      this.folder = (await this._folderService.openFolder(item.name).toPromise()).response;
+      this.paths.push(item.name);
+    }
   }
 
   onContextMenuEdit(item: (File|Folder)) {
@@ -176,12 +184,16 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  openDrive(){
-    console.log("Open Drive")
+  async openDrive(){
+    await this._userService.cleanPaths().toPromise();
+    this.folder = (await this._folderService.openFolder('root').toPromise()).response;
+    this.paths = ['root'];
   }
 
-  openShared(){
-    console.log("Open Shared")
+  async openShared(){
+    await this._userService.cleanPaths().toPromise();
+    this.folder = (await this._folderService.openFolder('shared').toPromise()).response;
+    this.paths = ['shared'];
   }
 
   async navigate(path: string, index: number){
