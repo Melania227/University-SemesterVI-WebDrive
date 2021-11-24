@@ -63,6 +63,14 @@ def postMove():
     name = request.json.get("name")
     return fileSystem.move(user, sourcePaths, name)
 
+@app.route('/fileSystem/copy', methods =['GET'])
+@cross_origin()
+def postCopy():
+    user = request.json.get("user")
+    sourcePaths = request.json.get("sourcePaths")
+    name = request.json.get("name")
+    return fileSystem.copy(user, sourcePaths, name)
+
 #Folders Routes 
 @app.route('/folders/current/', methods =['GET'])
 @cross_origin()
