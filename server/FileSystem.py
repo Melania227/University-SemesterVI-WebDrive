@@ -187,7 +187,8 @@ class FileSystem:
         return self.response(True, "This user is not registered.")
 
     def listUsers(self, user): 
-        users = list(self.drives).remove(user) 
+        users = list(self.drives)
+        users.remove(user) 
         return self.response(False, users) 
 
     #FileSystem Methods 
