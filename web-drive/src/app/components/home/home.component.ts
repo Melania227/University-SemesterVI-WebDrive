@@ -12,6 +12,8 @@ import { OpenFileComponent } from '../dialogs/open-file/open-file.component';
 import { CreateFileComponent } from '../dialogs/create-file/create-file.component';
 import { UserService } from 'src/app/services/user.service';
 import { ChooseSharedComponent } from '../dialogs/choose-shared/choose-shared.component';
+import { FilesystemService } from 'src/app/services/filesystem.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -30,12 +32,15 @@ export class HomeComponent implements OnInit {
   constructor(
     private readonly _folderService: FolderService,
     private readonly _fileService: FilesService,
+    public _fileSystemService: FilesystemService,
     private readonly _userService: UserService,
+    private readonly _router: Router,
     private _openDialog: MatDialog,
-    private _snackBar: MatSnackBar
+    private _snackBar: MatSnackBar,
   ) { }
 
   async ngOnInit():Promise<void> {
+    (await this._userService.cleanPaths().toPromise());
     this.folder = (await this._folderService.openFolder('root').toPromise()).response;
     this.paths.push('root');
   }
@@ -60,6 +65,30 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  async onContextMenuDelete(item: (File|Folder)) {
+    let info;
+    if(item.type==="file"){
+      info = (await this._fileService.deleteFile(item.name).toPromise());
+    }
+    else{
+      info = (await this._folderService.deleteFolder(item.name).toPromise());
+    }
+
+    if(info.error){
+      this._snackBar.open(info.response, "Ok", {
+        duration: 3000,
+        panelClass: ['error-class'],
+      });
+    }
+    else{
+      this.folder = (await this._folderService.getCurrentFolder().toPromise()).response;
+      this._snackBar.open(info.response, "Ok", {
+        duration: 3000,
+        panelClass: ['success-class'],
+      });
+    }
+  }
+
   onContextMenuEdit(item: (File|Folder)) {
     if (item.type!=="file"){
       alert(`Edit name of ${item.name}`);
@@ -69,12 +98,59 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  onContextMenuCopy(item: (File|Folder)) {
-    alert(`Copy ${item.name}`);
+  async onContextMenuCopy(item: (File|Folder)) {
+    (await this._fileSystemService.saveCopyInfo(item.name));
   }
 
-  onContextMenuMove(item: (File|Folder)) {
-    alert(`Move ${item.name}`);
+  async onContextMenuMove(item: (File|Folder)) {
+    (await this._fileSystemService.saveMoveInfo(item.name));
+    (await this._userService.cleanPaths().toPromise());
+    this.folder = (await this._folderService.openFolder('root').toPromise()).response;
+    this.paths = ['root'];
+  }
+
+  async pasteHere(){
+    if (this._fileSystemService.isCopying()){
+      let info = (await this._fileSystemService.copy().toPromise());
+      this._fileSystemService.cleanVariables();
+      if(info.error){
+        this._snackBar.open(info.response, "Ok", {
+          duration: 3000,
+          panelClass: ['error-class'],
+        });
+      }
+      else{
+        this.folder = (await this._folderService.getCurrentFolder().toPromise()).response;
+        this._snackBar.open(info.response, "Ok", {
+          duration: 3000,
+          panelClass: ['success-class'],
+        });
+      }
+    }
+    else{
+      this._snackBar.open("There's nothing on clipboard", "Ok", {
+        duration: 3000,
+        panelClass: ['error-class'],
+      });
+    }
+  }
+
+  async moveHere(){
+    let info = (await this._fileSystemService.move().toPromise());
+    this._fileSystemService.cleanVariables();
+    if(info.error){
+      this._snackBar.open(info.response, "Ok", {
+        duration: 3000,
+        panelClass: ['error-class'],
+      });
+    }
+    else{
+      this.folder = (await this._folderService.getCurrentFolder().toPromise()).response;
+      this._snackBar.open(info.response, "Ok", {
+        duration: 3000,
+        panelClass: ['success-class'],
+      });
+    }
   }
 
   onContextMenuShare(item: (File|Folder)){
@@ -154,7 +230,6 @@ export class HomeComponent implements OnInit {
   async openFile(item: File){
     let info = (await this._fileService.getFile(item.name).toPromise()).response;
     this._openDialog.open(OpenFileComponent, {width: '1000px', data: info});
-    //console.log((await this._fileService.getFile(item.name).toPromise()));
   }
 
   openOnMouseOver() {
@@ -214,11 +289,8 @@ export class HomeComponent implements OnInit {
   }
 
   async navigate(path: string, index: number){
-    console.log(this.paths);
-    console.log(index);
     this.folder = (await this._folderService.goToFolder(this.paths,index).toPromise()).response;
     this.paths = this.paths.slice(0,index+1);
-    //this.paths = this.paths.length===0?["root"]:this.paths;
   }
 
 }

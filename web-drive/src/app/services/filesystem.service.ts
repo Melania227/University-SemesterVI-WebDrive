@@ -34,18 +34,19 @@ export class FilesystemService {
 
   copy():Observable<CustomResponse>{
     let userName = localStorage.getItem('user');
-    this.copying = false;
-    this.name = "";
-    this.sourcePath = []
     return this.http.post<CustomResponse>(`${this.URL_API}/copy`, {"user": userName, "sourcePaths": this.sourcePath, "name": this.name})
   }
 
   move():Observable<CustomResponse>{
     let userName = localStorage.getItem('user');
+    return this.http.post<CustomResponse>(`${this.URL_API}/move`, {"user": userName, "sourcePaths": this.sourcePath, "name": this.name})
+  }
+
+  cleanVariables(){
+    this.copying = false;
     this.moving = false;
     this.name = "";
     this.sourcePath = []
-    return this.http.post<CustomResponse>(`${this.URL_API}/move`, {"user": userName, "sourcePaths": this.sourcePath, "name": this.name})
   }
 
   isCopying():boolean{
