@@ -18,7 +18,7 @@ def postUser():
 @app.route('/users/', methods =['GET'])
 @cross_origin()
 def getUsersList():
-    user = request.args.get("user")
+    user = request.args.get("user") 
     return fileSystem.listUsers(user)
 
 @app.route('/users/paths', methods =['GET'])
@@ -54,6 +54,22 @@ def getCurrentStorage():
     return fileSystem.getCurrentStorage(user)
 
 #FileSystem Routes
+
+@app.route('/fileSystem/move', methods =['GET'])
+@cross_origin()
+def postMove():
+    user = request.json.get("user")
+    sourcePaths = request.json.get("sourcePaths")
+    name = request.json.get("name")
+    return fileSystem.move(user, sourcePaths, name)
+
+@app.route('/fileSystem/copy', methods =['GET'])
+@cross_origin()
+def postCopy():
+    user = request.json.get("user")
+    sourcePaths = request.json.get("sourcePaths")
+    name = request.json.get("name")
+    return fileSystem.copy(user, sourcePaths, name)
 
 #Folders Routes 
 @app.route('/folders/current/', methods =['GET'])

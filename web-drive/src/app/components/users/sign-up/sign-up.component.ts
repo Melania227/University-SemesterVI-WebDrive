@@ -44,15 +44,17 @@ export class SignUpComponent implements OnInit {
     if (this.form.valid){
       let res = (await this._userService.createUser(this.form.get("username")?.value, this.form.get("maxBytes")?.value).toPromise());
       if(res.error){
-        console.log(res.response);
         this._snackBar.open(res.response, "Ok", {
           duration: 3000,
-          panelClass: ['custom-class'],
+          panelClass: ['error-class'],
         });
       }
       else{
-        //this._router.navigateByUrl(`invoices-list`);
-        console.log(res.response);
+        this._snackBar.open(res.response, "Ok", {
+          duration: 3000,
+          panelClass: ['success-class'],
+        });
+        this._router.navigateByUrl(`home`);
       }
     }
   }
