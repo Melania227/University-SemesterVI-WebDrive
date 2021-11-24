@@ -16,6 +16,9 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OpenFileComponent } from './components/dialogs/open-file/open-file.component';
 import { EditFileComponent } from './components/dialogs/edit-file/edit-file.component';
+import { EditFolderComponent } from './components/dialogs/edit-folder/edit-folder.component';
+import { CreateFolderComponent } from './components/dialogs/create-folder/create-folder.component';
+import { CreateFileComponent } from './components/dialogs/create-file/create-file.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +29,10 @@ import { EditFileComponent } from './components/dialogs/edit-file/edit-file.comp
     NavbarComponent,
     SidebarComponent,
     OpenFileComponent,
-    EditFileComponent
+    EditFileComponent,
+    EditFolderComponent,
+    CreateFolderComponent,
+    CreateFileComponent
   ],
   imports: [
     BrowserModule,

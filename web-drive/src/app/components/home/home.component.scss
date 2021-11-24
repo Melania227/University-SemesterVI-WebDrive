@@ -76,3 +76,19 @@ mat-drawer-content{
 a{
     cursor: pointer;
 }
+
+::ng-deep snack-bar-container.error-class {
+    background: #ce413f;
+    color: white;
+    button{
+        color: white;
+    }
+}
+
+::ng-deep snack-bar-container.success-class {
+    background: #01443C;
+    color: white;
+    button{
+        color: white;
+    }
+}

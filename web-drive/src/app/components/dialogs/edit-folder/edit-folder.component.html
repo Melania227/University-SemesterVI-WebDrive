@@ -1,0 +1,20 @@
+<body>
+    <h1>EDIT FOLDER NAME</h1>
+    <form [formGroup]="form" fxLayout="column" flex fxLayoutAlign="start start"
+        ngClass.xs="form-xs"
+        ngClass.gt-xs="form-gt-xs">
+        <mat-form-field floatLabel="auto" appearance="outline" color="warn" fxFill>
+            <mat-label>Name</mat-label>
+            <input  
+                #name
+                matInput
+                required
+                formControlName = "name"
+                [class.is-invalid] = "nameInvalid">
+                <mat-error align="end" *ngIf="nameInvalid">Please introduce the folder name</mat-error>
+        </mat-form-field>
+        <div class="container" fxLayoutAlign="center center" fxFill>
+            <button mat-raised-button [mat-dialog-close]="{'name': form.get('name')?.value}">Edit Folder Name</button>
+        </div>
+    </form>
+</body>
