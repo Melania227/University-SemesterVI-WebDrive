@@ -234,6 +234,50 @@ class FileSystem:
 
         return self.response(True, "It could not be found.")          
 
+    def copy(self, user, sourcePaths, name):
+        
+        sourceFolder = self.getFolder(user, sourcePaths)
+        
+        if("error" in sourceFolder):
+            return sourceFolder      
+
+        directories = sourceFolder["directories"]
+        for dir in directories:
+            if(dir["name"] == name):
+
+                destinationPaths = self.sessions[name]
+                destinationFolder = self.getFolder(user, destinationPaths)
+                
+                if("error" in destinationFolder):
+                	return sourceFolder 
+
+
+                fileLen = dir["size"]
+                driveCurrentBytes = self.drives[user]["currentBytes"]   
+                driveMaxBytes = self.drives[user]["maxBytes"]
+
+                if(driveCurrentBytes+fileLen > driveMaxBytes):
+                    return self.response(True, "There is no space available for copy this file.") 
+            
+
+                destinationFolder["directories"] = directories.copy()    
+
+                destinationFolder["size"] += fileLen
+                destinationFolder = destinationFolder.copy()
+                destinationPaths = destinationPaths[:-1] 
+                
+                while(destinationPaths != []):
+                    destinationFolder = self.getFolder(user, destinationPaths)  
+                    destinationFolder["size"] += fileLen
+                    destinationPaths = destinationPaths[:-1]
+                
+                if(dir["type"] == "file"):
+                    return self.response(False, "The file was copy successfully.")
+                else:
+                    return self.response(False, "The directory was copy successfully.")               
+
+        return self.response(True, "It could not be found.") 
+
     #Folders Methods 
     def getFolder(self, user, paths):
 
