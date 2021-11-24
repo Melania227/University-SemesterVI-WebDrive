@@ -42,7 +42,7 @@ export class SignUpComponent implements OnInit {
 
   async signUp(){
     if (this.form.valid){
-      let res = (await this._userService.createUser(this.form.get("username")?.value, this.form.get("maxBytes")?.value).toPromise());
+      let res = (await this._userService.createUser(this.form.get("username")?.value, parseInt(this.form.get("maxBytes")?.value)).toPromise());
       if(res.error){
         this._snackBar.open(res.response, "Ok", {
           duration: 3000,
@@ -54,6 +54,7 @@ export class SignUpComponent implements OnInit {
           duration: 3000,
           panelClass: ['success-class'],
         });
+        let res3:CustomResponse = (await this._userService.logIn(this.form.get("username")?.value));
         this._router.navigateByUrl(`home`);
       }
     }

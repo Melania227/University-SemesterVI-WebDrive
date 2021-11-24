@@ -1,1 +1,69 @@
-{}
+{
+    "Velvet": {
+        "maxBytes": 123456789,
+        "currentBytes": 25,
+        "root": {
+            "type": "folder",
+            "name": "root",
+            "directories": [
+                {
+                    "type": "folder",
+                    "name": "Mela",
+                    "directories": [
+                        {
+                            "type": "file",
+                            "name": "tu madre.txt",
+                            "data": "Me  cago en todo",
+                            "size": 16,
+                            "creationDate": "24/11/2021 14:56:39",
+                            "modificationDate": "24/11/2021 14:56:39"
+                        },
+                        {
+                            "type": "folder",
+                            "name": "AAAAAAAAAAAAAAAAAAAAAAAAA",
+                            "directories": [],
+                            "size": 0
+                        }
+                    ],
+                    "size": 16
+                },
+                {
+                    "type": "folder",
+                    "name": "Jose",
+                    "directories": [
+                        {
+                            "type": "file",
+                            "name": "DIOS.TXT",
+                            "data": "PACIENCIA",
+                            "size": 9,
+                            "creationDate": "24/11/2021 14:56:57",
+                            "modificationDate": "24/11/2021 14:56:57"
+                        },
+                        {
+                            "type": "folder",
+                            "name": "Juakin",
+                            "directories": [],
+                            "size": 0
+                        }
+                    ],
+                    "size": 9
+                },
+                {
+                    "type": "file",
+                    "name": "tu madre.txt",
+                    "data": "Me  cago en todo",
+                    "size": 16,
+                    "creationDate": "24/11/2021 14:56:39",
+                    "modificationDate": "24/11/2021 14:56:39"
+                }
+            ],
+            "size": 41
+        },
+        "shared": {
+            "type": "folder",
+            "name": "shared",
+            "directories": [],
+            "size": 0
+        }
+    }
+}
