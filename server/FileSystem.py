@@ -118,7 +118,7 @@ class FileSystem:
                 folderShared = self.getFolder(shareWith, ["shared"])
                 
                 folderShared["directories"].append(dir.copy())
-                folderShared["directories"]["size"] += dir["size"]
+                folderShared["size"] += dir["size"]
                 self.drives[shareWith]["currentBytes"] += dir["size"]
 
                 self.saveFileSystem()
