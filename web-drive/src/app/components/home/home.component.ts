@@ -5,8 +5,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Folder } from 'src/app/models/folder.model';
 import { FilesService } from 'src/app/services/files.service';
 import { FolderService } from 'src/app/services/folders.service';
+import { CreateFolderComponent } from '../dialogs/create-folder/create-folder.component';
 import { EditFileComponent } from '../dialogs/edit-file/edit-file.component';
+import { EditFolderComponent } from '../dialogs/edit-folder/edit-folder.component';
 import { OpenFileComponent } from '../dialogs/open-file/open-file.component';
+import { CreateFileComponent } from '../dialogs/create-file/create-file.component';
 
 @Component({
   selector: 'app-home',
@@ -43,8 +46,9 @@ export class HomeComponent implements OnInit {
     this.contextMenu.openMenu();
   }
 
-  onContextMenuOpen(item: (File|Folder)) {
-    alert(`Open ${item.name}`);
+  async onContextMenuOpen(item: (File|Folder)) {
+    let info = (await this._fileService.getFile(item.name).toPromise()).response;
+    this._openDialog.open(OpenFileComponent, {width: '1000px', data: info});
   }
 
   onContextMenuEdit(item: (File|Folder)) {
@@ -78,7 +82,7 @@ export class HomeComponent implements OnInit {
 
   async editFile(item: File){
     let info = (await this._fileService.getFile(item.name).toPromise()).response;
-    let done = this._openDialog.open(EditFileComponent, {width: '1000px', height: '800px', data: info}).afterClosed();
+    let done = this._openDialog.open(EditFileComponent, {width: '1000px', data: info}).afterClosed();
     done.subscribe(async (res)=>{
       let res2 = (await this._fileService.updateFile(item.name, res.name, res.content).toPromise());
       if(res2.error){
@@ -94,10 +98,28 @@ export class HomeComponent implements OnInit {
           panelClass: ['success-class'],
         });
       }
-    })
+    });
   }
 
-  editFolder(item: File){}
+  async editFolder(item: Folder){
+    let done = this._openDialog.open(EditFolderComponent, {width: '1000px', data: item}).afterClosed();
+    done.subscribe(async (res)=>{
+      let res2 = (await this._folderService.updateFolderName(item.name, res.name).toPromise());
+      if(res2.error){
+        this._snackBar.open(res2.response, "Ok", {
+          duration: 3000,
+          panelClass: ['error-class'],
+        });
+      }
+      else{
+        this.folder = (await this._folderService.getCurrentFolder().toPromise()).response;
+        this._snackBar.open(res2.response, "Ok", {
+          duration: 3000,
+          panelClass: ['success-class'],
+        });
+      }
+    });
+  }
 
   async openFolder(item: Folder){
     this.folder = (await this._folderService.openFolder(item.name).toPromise()).response;
@@ -106,7 +128,7 @@ export class HomeComponent implements OnInit {
 
   async openFile(item: File){
     let info = (await this._fileService.getFile(item.name).toPromise()).response;
-    this._openDialog.open(OpenFileComponent, {width: '1000px', height: '800px', data: info});
+    this._openDialog.open(OpenFileComponent, {width: '1000px', data: info});
     //console.log((await this._fileService.getFile(item.name).toPromise()));
   }
 
@@ -115,11 +137,43 @@ export class HomeComponent implements OnInit {
   }
 
   addFolder(){
-    console.log("addFolder");
+    let done = this._openDialog.open(CreateFolderComponent, {width: '1000px'}).afterClosed();
+    done.subscribe(async (res)=>{
+      let res2 = (await this._folderService.createFolder(res.name).toPromise());
+      if(res2.error){
+        this._snackBar.open(res2.response, "Ok", {
+          duration: 3000,
+          panelClass: ['error-class'],
+        });
+      }
+      else{
+        this.folder = (await this._folderService.getCurrentFolder().toPromise()).response;
+        this._snackBar.open(res2.response, "Ok", {
+          duration: 3000,
+          panelClass: ['success-class'],
+        });
+      }
+    });
   }
 
   addFile(){
-    console.log("addFile");
+    let done = this._openDialog.open(CreateFileComponent, {width: '1000px'}).afterClosed();
+    done.subscribe(async (res)=>{
+      let res2 = (await this._fileService.createFile(res.name, res.content).toPromise());
+      if(res2.error){
+        this._snackBar.open(res2.response, "Ok", {
+          duration: 3000,
+          panelClass: ['error-class'],
+        });
+      }
+      else{
+        this.folder = (await this._folderService.getCurrentFolder().toPromise()).response;
+        this._snackBar.open(res2.response, "Ok", {
+          duration: 3000,
+          panelClass: ['success-class'],
+        });
+      }
+    });
   }
 
   openDrive(){
