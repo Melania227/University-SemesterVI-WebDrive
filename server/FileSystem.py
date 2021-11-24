@@ -29,7 +29,7 @@ class FileSystem:
                             {
                                 "type": "file",
                                 "name" : "text.txt",
-                                "data" :  "Para terminar hay que subrayar que en el ámbito de \n la tecnología y, en concreto, en el de la informática se hace también un uso bastante extendido del término que estamos analizando.\n En concreto, se habla de lo que se conoce como procesador de textos que es un programa gracias al cual el usuario puede escribir en su ordenador diversos documentos. Word y OpenOffice Writer son \n los dos procesadores de este tipo más importantes y de uso más generalizado.",
+                                "data" :  "This is an example text.",
                                 "size" : 24,
                                 "creationDate" : "22/11/2021 20:47:33",
                                 "modificationDate" : "22/11/2021 20:47:33"
@@ -187,7 +187,8 @@ class FileSystem:
         return self.response(True, "This user is not registered.")
 
     def listUsers(self, user): 
-        users = list(self.drives).remove(user) 
+        users = list(self.drives)
+        users.remove(user) 
         return self.response(False, users) 
 
     #FileSystem Methods 
@@ -251,6 +252,97 @@ class FileSystem:
                     return self.response(False, "The directory was sahred successfully.")
 
         return self.response(True, "It could not be found.")  
+
+    def move(self, user, sourcePaths, name):
+        
+        sourceFolder = self.getFolder(user, sourcePaths)
+        
+        if("error" in sourceFolder):
+            return sourceFolder      
+
+        directories = sourceFolder["directories"]
+        for dir in directories:
+            if(dir["name"] == name):
+                
+                destinationPaths = self.sessions[name]
+                destinationFolder = self.getFolder(user, destinationPaths)
+
+                if("error" in destinationFolder):
+                	return sourceFolder 
+                
+                directories.remove(dir)
+                destinationFolder["directories"].append(dir)
+
+                fileLen = dir["size"]
+                
+                sourceFolder["size"] -= fileLen
+                sourcePaths = sourcePaths.copy()
+                sourcePaths = sourcePaths[:-1] 
+                
+                while(sourcePaths != []):
+                    sourceFolder = self.getFolder(user, sourcePaths)  
+                    sourceFolder["size"] -= fileLen
+                    sourcePaths = sourcePaths[:-1]
+
+                destinationFolder["size"] += fileLen
+                destinationFolder = destinationFolder.copy()
+                destinationPaths = destinationPaths[:-1] 
+                
+                while(destinationPaths != []):
+                    destinationFolder = self.getFolder(user, destinationPaths)  
+                    destinationFolder["size"] += fileLen
+                    destinationPaths = destinationPaths[:-1]
+                
+                if(dir["type"] == "file"):
+                    return self.response(False, "The file was moved successfully.")
+                else:
+                    return self.response(False, "The directory was moved successfully.")               
+
+        return self.response(True, "It could not be found.")          
+
+    def copy(self, user, sourcePaths, name):
+        
+        sourceFolder = self.getFolder(user, sourcePaths)
+        
+        if("error" in sourceFolder):
+            return sourceFolder      
+
+        directories = sourceFolder["directories"]
+        for dir in directories:
+            if(dir["name"] == name):
+
+                destinationPaths = self.sessions[name]
+                destinationFolder = self.getFolder(user, destinationPaths)
+                
+                if("error" in destinationFolder):
+                	return sourceFolder 
+
+
+                fileLen = dir["size"]
+                driveCurrentBytes = self.drives[user]["currentBytes"]   
+                driveMaxBytes = self.drives[user]["maxBytes"]
+
+                if(driveCurrentBytes+fileLen > driveMaxBytes):
+                    return self.response(True, "There is no space available for copy this file.") 
+            
+
+                destinationFolder["directories"] = directories.copy()    
+
+                destinationFolder["size"] += fileLen
+                destinationFolder = destinationFolder.copy()
+                destinationPaths = destinationPaths[:-1] 
+                
+                while(destinationPaths != []):
+                    destinationFolder = self.getFolder(user, destinationPaths)  
+                    destinationFolder["size"] += fileLen
+                    destinationPaths = destinationPaths[:-1]
+                
+                if(dir["type"] == "file"):
+                    return self.response(False, "The file was copy successfully.")
+                else:
+                    return self.response(False, "The directory was copy successfully.")               
+
+        return self.response(True, "It could not be found.") 
 
     #Folders Methods 
     def getFolder(self, user, paths):
@@ -320,7 +412,7 @@ class FileSystem:
         nFolder = newFolder(name) 
         directories.append(nFolder)
 
-        return self.response(False, nFolder)
+        return self.response(False, "The folder was created successfully.")
     
     def updateFolder(self, user, name, newName):
         paths = self.sessions[user]
@@ -392,7 +484,7 @@ class FileSystem:
             folder["size"] += fileLen
             paths = paths[:-1] 
             
-        return self.response(False, nFile)
+        return self.response(False, "The file was created successfully.")
     
     def updateFile(self, user, name, newName, newData):
 
