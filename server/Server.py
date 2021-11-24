@@ -170,4 +170,5 @@ def shareFile():
 
 #Main
 if __name__ == "__main__":
+    fileSystem.loadFileSystem()
     app.run(host="localhost", port=8000)
