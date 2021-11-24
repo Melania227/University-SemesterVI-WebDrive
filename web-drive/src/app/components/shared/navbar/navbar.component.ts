@@ -23,4 +23,8 @@ export class NavbarComponent implements OnInit {
     this._router.navigateByUrl("login");
   }
 
+  isInSession(){
+    return localStorage.getItem("user")
+  }
+
 }

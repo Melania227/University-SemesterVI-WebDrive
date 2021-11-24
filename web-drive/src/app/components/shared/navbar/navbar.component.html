@@ -1,10 +1,10 @@
 <mat-toolbar>
-    <div class="container bar" fxLayout="row" fxLayoutAlign="space-between center">
+    <div class="container bar" fxFlex  fxLayout="row" fxLayoutAlign="space-between center" >
         <div class="container" fxLayout="row">
             <img class="imgSanta" src="https://i.ibb.co/pnD7KhM/Santa.png2" alt="">
             <span fxLayoutAlign="center center">Elbow Team Drive</span>
         </div>
-        <div class="container" fxLayoutAlign="end end" fxFill>
+        <div class="container" *ngIf="isInSession()">
             <button mat-raised-button (click)="logout()">Logout</button>
         </div>
     </div>
