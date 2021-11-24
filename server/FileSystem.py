@@ -187,6 +187,53 @@ class FileSystem:
 
         return self.response(True, "It could not be found.")  
 
+    def move(self, user, sourcePaths, name):
+        
+        sourceFolder = self.getFolder(user, sourcePaths)
+        
+        if("error" in sourceFolder):
+            return sourceFolder      
+
+        directories = sourceFolder["directories"]
+        for dir in directories:
+            if(dir["name"] == name):
+                
+                destinationPaths = self.sessions[name]
+                destinationFolder = self.getFolder(user, destinationPaths)
+
+                if("error" in destinationFolder):
+                	return sourceFolder 
+                
+                directories.remove(dir)
+                destinationFolder["directories"].append(dir)
+
+                fileLen = dir["size"]
+                
+                sourceFolder["size"] -= fileLen
+                sourcePaths = sourcePaths.copy()
+                sourcePaths = sourcePaths[:-1] 
+                
+                while(sourcePaths != []):
+                    sourceFolder = self.getFolder(user, sourcePaths)  
+                    sourceFolder["size"] -= fileLen
+                    sourcePaths = sourcePaths[:-1]
+
+                destinationFolder["size"] += fileLen
+                destinationFolder = destinationFolder.copy()
+                destinationPaths = destinationPaths[:-1] 
+                
+                while(destinationPaths != []):
+                    destinationFolder = self.getFolder(user, destinationPaths)  
+                    destinationFolder["size"] += fileLen
+                    destinationPaths = destinationPaths[:-1]
+                
+                if(dir["type"] == "file"):
+                    return self.response(False, "The file was moved successfully.")
+                else:
+                    return self.response(False, "The directory was moved successfully.")               
+
+        return self.response(True, "It could not be found.")          
+
     #Folders Methods 
     def getFolder(self, user, paths):
 
