@@ -18,7 +18,7 @@ def postUser():
 @app.route('/users/', methods =['GET'])
 @cross_origin()
 def getUsersList():
-    user = request.args.get("user")
+    user = request.args.get("user") 
     return fileSystem.listUsers(user)
 
 @app.route('/users/paths', methods =['GET'])
