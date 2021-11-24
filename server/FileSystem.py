@@ -1,141 +1,14 @@
-from os import path
+from os import path, listdir
 from datetime import datetime
+import json
 
 from DataModels import newDrive, newFolder, newFile
 
 class FileSystem:
     def __init__(self):
-        self.sessions = {"Velvet":[]}
-        self.drives = {
-            "Velvet": {
-            "currentBytes": 24,
-            "maxBytes": 100024,
-            "root": {
-                "directories": [
-                    {
-                        "directories": [
-                            {
-                                "directories": [],
-                                "name": "jose1",
-                                "type": "folder",
-                                "size": 0
-                            },
-                            {
-                                "directories": [],
-                                "name": "jose2",
-                                "type": "folder",
-                                "size": 0
-                            },
-                            {
-                                "type": "file",
-                                "name" : "text.txt",
-                                "data" :  "This is an example text.",
-                                "size" : 24,
-                                "creationDate" : "22/11/2021 20:47:33",
-                                "modificationDate" : "22/11/2021 20:47:33"
-                            }
-                        ],
-                        "name": "jose",
-                        "type": "folder",
-                        "size": 24
-                    },
-                    {
-                        "directories": [
-                            {
-                                "directories": [],
-                                "name": "mela1",
-                                "type": "folder",
-                                "size": 0
-                            },
-                            {
-                                "directories": [],
-                                "name": "mela2",
-                                "type": "folder",
-                                "size": 0
-                            }
-                        ],
-                        "name": "mela",
-                        "type": "folder",
-                        "size": 0
-                    }
-                ],
-                "name": "root",
-                "type": "folder",
-                "size": 24
-            },
-            "shared": {
-                "directories": [],
-                "name": "shared",
-                "type": "folder",
-                "size": 0
-            }
-            },
-        "Velvet2": {
-            "currentBytes": 24,
-            "maxBytes": 100024,
-            "root": {
-                "directories": [
-                    {
-                        "directories": [
-                            {
-                                "directories": [],
-                                "name": "jose1",
-                                "type": "folder",
-                                "size": 0
-                            },
-                            {
-                                "directories": [],
-                                "name": "jose2",
-                                "type": "folder",
-                                "size": 0
-                            },
-                            {
-                                "type": "file",
-                                "name" : "text.txt",
-                                "data" :  "Para terminar hay que subrayar que en el ámbito de \n la tecnología y, en concreto, en el de la informática se hace también un uso bastante extendido del término que estamos analizando.\n En concreto, se habla de lo que se conoce como procesador de textos que es un programa gracias al cual el usuario puede escribir en su ordenador diversos documentos. Word y OpenOffice Writer son \n los dos procesadores de este tipo más importantes y de uso más generalizado.",
-                                "size" : 24,
-                                "creationDate" : "22/11/2021 20:47:33",
-                                "modificationDate" : "22/11/2021 20:47:33"
-                            }
-                        ],
-                        "name": "jose",
-                        "type": "folder",
-                        "size": 24
-                    },
-                    {
-                        "directories": [
-                            {
-                                "directories": [],
-                                "name": "mela1",
-                                "type": "folder",
-                                "size": 0
-                            },
-                            {
-                                "directories": [],
-                                "name": "mela2",
-                                "type": "folder",
-                                "size": 0
-                            }
-                        ],
-                        "name": "mela",
-                        "type": "folder",
-                        "size": 0
-                    }
-                ],
-                "name": "root",
-                "type": "folder",
-                "size": 24
-            },
-            "shared": {
-                "directories": [],
-                "name": "shared",
-                "type": "folder",
-                "size": 0
-            }
-        }
+        self.sessions = {}
+        self.drives = {}    
         
-    }
-    
     #Methods 
     def response(self, error, response):
         return {"error": error, "response": response}
@@ -146,7 +19,7 @@ class FileSystem:
             return self.response(True, "This user already exists.")
         
         self.drives[user] = newDrive(maxBytes)
-
+        self.saveFileSystem()
         return self.response(False, f"Drive created for user {user}.")
 
     def logIn(self, user):
@@ -215,6 +88,8 @@ class FileSystem:
                     folder = self.getFolder(user, paths)  
                     folder["size"] -= fileLen
                     paths = paths[:-1] 
+                
+                self.saveFileSystem()
 
                 if(dir["type"] == "file"):
                     return self.response(False, "The file was deleted successfully.")
@@ -245,6 +120,8 @@ class FileSystem:
                 folderShared["directories"].append(dir.copy())
                 folderShared["size"] += dir["size"]
                 self.drives[shareWith]["currentBytes"] += dir["size"]
+
+                self.saveFileSystem()
 
                 if(dir["type"] == "file"):
                     return self.response(False, "The file was shared successfully.")
@@ -293,6 +170,8 @@ class FileSystem:
                     destinationFolder["size"] += fileLen
                     destinationPaths = destinationPaths[:-1]
                 
+                self.saveFileSystem()
+
                 if(dir["type"] == "file"):
                     return self.response(False, "The file was moved successfully.")
                 else:
@@ -337,6 +216,8 @@ class FileSystem:
                     destinationFolder["size"] += fileLen
                     destinationPaths = destinationPaths[:-1]
                 
+                self.saveFileSystem()
+
                 if(dir["type"] == "file"):
                     return self.response(False, "The file was copy successfully.")
                 else:
@@ -412,6 +293,8 @@ class FileSystem:
         nFolder = newFolder(name) 
         directories.append(nFolder)
 
+        self.saveFileSystem()
+
         return self.response(False, "The folder was created successfully.")
     
     def updateFolder(self, user, name, newName):
@@ -426,6 +309,7 @@ class FileSystem:
         for dir in directories:
             if(dir["name"] == name):
                 dir["name"] = newName
+                self.saveFileSystem()
                 return self.response(False, "The directory was successfully edited.")
 
         return self.response(True, "The directory could not be found.")
@@ -484,6 +368,8 @@ class FileSystem:
             folder["size"] += fileLen
             paths = paths[:-1] 
             
+        self.saveFileSystem()
+
         return self.response(False, "The file was created successfully.")
     
     def updateFile(self, user, name, newName, newData):
@@ -521,6 +407,16 @@ class FileSystem:
 
                 dir["modificationDate"] = dt_string
                 
+                self.saveFileSystem()
+
                 return self.response(False, "The file was successfully edited.")
 
         return self.response(True, "The file could not be found.")
+    
+    def saveFileSystem(self):
+        with open(f'server/data/filesystem.json', 'w') as outfile:
+            json.dump(self.drives, outfile, indent=4)
+
+    def loadFileSystem(self):
+        with open(f'server/data/filesystem.json', 'r') as outfile:
+            self.drives = json.load(outfile)

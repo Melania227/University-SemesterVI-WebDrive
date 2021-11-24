@@ -21,10 +21,10 @@ def getUsersList():
     user = request.args.get("user") 
     return fileSystem.listUsers(user)
 
-@app.route('/users/paths', methods =['GET'])
+@app.route('/users/paths/', methods =['GET'])
 @cross_origin()
 def getUsersPaths():
-    user = request.json.get("user")
+    user = request.args.get("user")
     return fileSystem.getCurrentPaths(user)
     
 
@@ -55,7 +55,7 @@ def getCurrentStorage():
 
 #FileSystem Routes
 
-@app.route('/fileSystem/move', methods =['GET'])
+@app.route('/fileSystem/move', methods =['POST'])
 @cross_origin()
 def postMove():
     user = request.json.get("user")
@@ -63,7 +63,7 @@ def postMove():
     name = request.json.get("name")
     return fileSystem.move(user, sourcePaths, name)
 
-@app.route('/fileSystem/copy', methods =['GET'])
+@app.route('/fileSystem/copy', methods =['POST'])
 @cross_origin()
 def postCopy():
     user = request.json.get("user")
@@ -170,4 +170,5 @@ def shareFile():
 
 #Main
 if __name__ == "__main__":
+    fileSystem.loadFileSystem()
     app.run(host="localhost", port=8000)
