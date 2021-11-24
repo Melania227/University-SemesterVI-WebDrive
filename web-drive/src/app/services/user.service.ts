@@ -52,4 +52,9 @@ export class UserService {
     let userName = localStorage.getItem('user');
     return this.http.get<CustomResponse>(`${this.URL_API}/?user=${userName}`);
   }
+
+  getUsersPaths():Observable<CustomResponse>{
+    let userName = localStorage.getItem('user');
+    return this.http.get<CustomResponse>(`${this.URL_API}/paths/?user=${userName}`); 
+  }
 }
