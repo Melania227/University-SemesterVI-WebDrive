@@ -6,7 +6,71 @@ from DataModels import newDrive, newFolder, newFile
 class FileSystem:
     def __init__(self):
         self.sessions = {"Velvet":[]}
-        self.drives = {"Velvet": {
+        self.drives = {
+            "Velvet": {
+            "currentBytes": 24,
+            "maxBytes": 100024,
+            "root": {
+                "directories": [
+                    {
+                        "directories": [
+                            {
+                                "directories": [],
+                                "name": "jose1",
+                                "type": "folder",
+                                "size": 0
+                            },
+                            {
+                                "directories": [],
+                                "name": "jose2",
+                                "type": "folder",
+                                "size": 0
+                            },
+                            {
+                                "type": "file",
+                                "name" : "text.txt",
+                                "data" :  "Para terminar hay que subrayar que en el ámbito de \n la tecnología y, en concreto, en el de la informática se hace también un uso bastante extendido del término que estamos analizando.\n En concreto, se habla de lo que se conoce como procesador de textos que es un programa gracias al cual el usuario puede escribir en su ordenador diversos documentos. Word y OpenOffice Writer son \n los dos procesadores de este tipo más importantes y de uso más generalizado.",
+                                "size" : 24,
+                                "creationDate" : "22/11/2021 20:47:33",
+                                "modificationDate" : "22/11/2021 20:47:33"
+                            }
+                        ],
+                        "name": "jose",
+                        "type": "folder",
+                        "size": 24
+                    },
+                    {
+                        "directories": [
+                            {
+                                "directories": [],
+                                "name": "mela1",
+                                "type": "folder",
+                                "size": 0
+                            },
+                            {
+                                "directories": [],
+                                "name": "mela2",
+                                "type": "folder",
+                                "size": 0
+                            }
+                        ],
+                        "name": "mela",
+                        "type": "folder",
+                        "size": 0
+                    }
+                ],
+                "name": "root",
+                "type": "folder",
+                "size": 24
+            },
+            "shared": {
+                "directories": [],
+                "name": "shared",
+                "type": "folder",
+                "size": 0
+            }
+            },
+        "Velvet2": {
             "currentBytes": 24,
             "maxBytes": 100024,
             "root": {
@@ -69,6 +133,7 @@ class FileSystem:
                 "size": 0
             }
         }
+        
     }
     
     #Methods 
@@ -121,9 +186,9 @@ class FileSystem:
         
         return self.response(True, "This user is not registered.")
 
-    def listUsers(self, user):
-        users = list(self.drives).remove(user)
-        return self.response(False, users)
+    def listUsers(self, user): 
+        users = list(self.drives).remove(user) 
+        return self.response(False, users) 
 
     #FileSystem Methods 
     def delete(self, user, name):
