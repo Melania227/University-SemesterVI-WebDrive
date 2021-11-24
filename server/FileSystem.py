@@ -1,5 +1,6 @@
 from os import path
 from datetime import datetime
+import json
 
 from DataModels import newDrive, newFolder, newFile
 
@@ -524,3 +525,11 @@ class FileSystem:
                 return self.response(False, "The file was successfully edited.")
 
         return self.response(True, "The file could not be found.")
+    
+    def saveFileSystem(self):
+        with open(f'data/filesystem.json', 'w') as outfile:
+            json.dump(self.drives, outfile, indent=4)
+
+    def loadFileSystem(self):
+        with open(f'data/filesystem.json', 'r') as outfile:
+            self.drives = json.load(outfile)
