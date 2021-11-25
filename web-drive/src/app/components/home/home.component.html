@@ -5,12 +5,12 @@
         <mat-drawer-container class="example-container">
             <mat-drawer mode="side" opened>
                 <mat-list>
-                    <div mat-subheader>My drive</div>
+                    <div mat-subheader>{{user}}'s drive</div>
                     <mat-list-item (click)="openDrive()">
                     <mat-icon mat-list-icon>folder</mat-icon>
                     <div mat-line>Drive</div>
-                    <div mat-line>{{storageInfo.currentBytes}}/{{storageInfo.maxBytes}}bytes</div>
-                    <div mat-line>{{storageInfo.percentage*100}}%</div>
+                    <div mat-line>{{storageInfo.currentBytes}}/{{storageInfo.maxBytes}} bytes</div>
+                    <div mat-line>{{storageInfo.percentage*100 | number:'.1-5'}}%</div>
                     </mat-list-item>
                     <mat-divider></mat-divider>
                     <mat-list-item (click)="openShared()">
@@ -46,7 +46,11 @@
                     </mat-card>
                 </div>
 
-                <div class="container">
+                <div class="container loading" *ngIf="uploading" fxLayoutAlign="center center">
+                    <mat-spinner></mat-spinner>
+                </div>
+
+                <div class="container" *ngIf="!uploading">
                     <div class="container" fxLayout="row" fxLayoutAlign="space-between start">
                         <div class="container files" fxLayout="row wrap" fxLayoutGap="30px">
                             <mat-card *ngFor="let item of folder.directories" fxLayout="column" fxLayoutAlign="center center" (click)="item.type==='file'?openFile(item):openFolder(item)" (contextmenu)="onContextMenu($event, item)">
@@ -65,7 +69,7 @@
                             <button  mat-mini-fab (click)="fileUpload.click()">
                                 <mat-icon>cloud_upload</mat-icon>
                             </button>
-                            <input type='file' class="file-input" (change)='uploadFile($event)' #fileUpload>
+                            <input type='file' accept="text/plain" class="file-input" (change)='uploadFile($event)' #fileUpload>
                         </div>
                     </div>
                 </div>

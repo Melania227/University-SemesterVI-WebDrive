@@ -121,3 +121,11 @@ a{
 .mat-dialog-actions{
     padding-top: 2%;
 }
+
+.loading{
+    padding: 100px;
+}
+
+::ng-deep .mat-progress-spinner circle, .mat-spinner circle {
+    stroke: #01443C!important;
+}

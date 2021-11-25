@@ -28,6 +28,8 @@ export class HomeComponent implements OnInit {
   fileNameToUpload!:string;
   dataUploaded!:string;
   storageInfo:any;
+  user!:(string|null);
+  uploading!:boolean;
 
   @ViewChild(MatMenuTrigger) contextMenu!: MatMenuTrigger;
 
@@ -48,6 +50,7 @@ export class HomeComponent implements OnInit {
     this.folder = (await this._folderService.openFolder('root').toPromise()).response;
     this.paths.push('root');
     this.storageInfo = (await this._userService.getCurrentStorage().toPromise()).response;
+    this.user = localStorage.getItem("user");
     //{"maxBytes": max, "currentBytes": current, "percentage": percentage}
   }
 
@@ -95,16 +98,7 @@ export class HomeComponent implements OnInit {
       });
     }
   }
-
-  onContextMenuEdit(item: (File|Folder)) {
-    if (item.type!=="file"){
-      alert(`Edit name of ${item.name}`);
-    }
-    else{
-      alert(`Edit ${item.name}`);
-    }
-  }
-
+  
   async onContextMenuCopy(item: (File|Folder)) {
     (await this._fileSystemService.saveCopyInfo(item.name));
   }
@@ -128,6 +122,7 @@ export class HomeComponent implements OnInit {
       }
       else{
         this.folder = (await this._folderService.getCurrentFolder().toPromise()).response;
+        this.storageInfo = (await this._userService.getCurrentStorage().toPromise()).response;
         this._snackBar.open(info.response, "Ok", {
           duration: 3000,
           panelClass: ['success-class'],
@@ -193,6 +188,7 @@ export class HomeComponent implements OnInit {
       }
       else{
         this.folder = (await this._folderService.getCurrentFolder().toPromise()).response;
+        this.storageInfo = (await this._userService.getCurrentStorage().toPromise()).response;
         this._snackBar.open(res2.response, "Ok", {
           duration: 3000,
           panelClass: ['success-class'],
@@ -298,13 +294,28 @@ export class HomeComponent implements OnInit {
   /* DOWNLOAD */
   uploadFile(event:any) {
     let file = event.target.files[0];
-    this.fileNameToUpload = file.name
+    this.fileNameToUpload = file.name;
+    this.uploading = true;
     this.readFile(file).then(async (result)=>{
-      await this._fileService.createFile(this.fileNameToUpload, this.dataUploaded).toPromise();
-      this.storageInfo = (await this._userService.getCurrentStorage().toPromise()).response;
+      let info = (await this._fileService.createFile(this.fileNameToUpload, this.dataUploaded).toPromise());
+      if(info.error){
+        this._snackBar.open(info.response, "Ok", {
+          duration: 3000,
+          panelClass: ['error-class'],
+        });
+      }
+      else{
+        this.storageInfo = (await this._userService.getCurrentStorage().toPromise()).response;
+        this.folder = (await this._folderService.getCurrentFolder().toPromise()).response;
+        this._snackBar.open(info.response, "Ok", {
+          duration: 3000,
+          panelClass: ['success-class'],
+        });
+      }
+
       this.fileNameToUpload="";
       this.dataUploaded="";
-      this.folder = (await this._folderService.getCurrentFolder().toPromise()).response;
+      this.uploading = false;
     })
   }
 
