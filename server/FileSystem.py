@@ -118,6 +118,10 @@ class FileSystem:
                 
                 folderShared = self.getFolder(shareWith, ["shared"])
                 
+                for destDir in folderShared["directories"] :
+                    if(destDir["name"]==dir["name"]):
+                        return self.response("What you want to shared already exist in the user shared folder.")
+
                 folderShared["directories"].append(dir.copy())
                 folderShared["size"] += dir["size"]
                 self.drives[shareWith]["currentBytes"] += dir["size"]
@@ -151,6 +155,10 @@ class FileSystem:
 
                 if("error" in destinationFolder):
                 	return sourceFolder 
+                
+                for destDir in destinationFolder["directories"] :
+                    if(destDir["name"]==dir["name"]):
+                        return self.response("What you want to move already exist in the folder.")
                 
                 directories.remove(dir)
                 destinationFolder["directories"].append(dir)
@@ -201,6 +209,9 @@ class FileSystem:
                 if("error" in destinationFolder):
                 	return sourceFolder 
 
+                for destDir in destinationFolder["directories"] :
+                    if(destDir["name"]==dir["name"]):
+                        return self.response("What you want to copy already exist in the folder.")                
 
                 fileLen = dir["size"]
                 driveCurrentBytes = self.drives[user]["currentBytes"]   
@@ -309,8 +320,12 @@ class FileSystem:
         if("error" in folder):
             return folder
 
-
         directories = folder["directories"]
+
+        for dir in directories:
+            if(dir["name"]== newName):
+                return self.response(True, "This directory already exists.")
+
         for dir in directories:
             if(dir["name"] == name):
                 dir["name"] = newName
@@ -386,9 +401,13 @@ class FileSystem:
         
         if("error" in folder):
             return folder
-
-
+        
         directories = folder["directories"]
+        
+        for dir in directories:
+            if(dir["name"]== newName):
+                return self.response(True, "This file already exists.")
+
         for dir in directories:
             if(dir["name"] == name):
                 
