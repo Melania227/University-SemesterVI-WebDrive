@@ -27,6 +27,7 @@ export class HomeComponent implements OnInit {
   paths: string[]=[];
   fileNameToUpload!:string;
   dataUploaded!:string;
+  storageInfo:any;
 
   @ViewChild(MatMenuTrigger) contextMenu!: MatMenuTrigger;
 
@@ -46,6 +47,8 @@ export class HomeComponent implements OnInit {
     (await this._userService.cleanPaths().toPromise());
     this.folder = (await this._folderService.openFolder('root').toPromise()).response;
     this.paths.push('root');
+    this.storageInfo = (await this._userService.getCurrentStorage().toPromise()).response;
+    //{"maxBytes": max, "currentBytes": current, "percentage": percentage}
   }
 
   onContextMenu(event: MouseEvent, item: (File|Folder)) {
@@ -85,6 +88,7 @@ export class HomeComponent implements OnInit {
     }
     else{
       this.folder = (await this._folderService.getCurrentFolder().toPromise()).response;
+      this.storageInfo = (await this._userService.getCurrentStorage().toPromise()).response;
       this._snackBar.open(info.response, "Ok", {
         duration: 3000,
         panelClass: ['success-class'],
@@ -176,14 +180,6 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  onContextMenuAddFile(){
-    alert(`Create File`);
-  }
-
-  onContextMenuAddFolder(){
-    alert(`Create Folder`);
-  }
-
   async editFile(item: File){
     let info = (await this._fileService.getFile(item.name).toPromise()).response;
     let done = this._openDialog.open(EditFileComponent, {width: '1000px', data: info}).afterClosed();
@@ -250,6 +246,7 @@ export class HomeComponent implements OnInit {
         });
       }
       else{
+        this.storageInfo = (await this._userService.getCurrentStorage().toPromise()).response;
         this.folder = (await this._folderService.getCurrentFolder().toPromise()).response;
         this._snackBar.open(res2.response, "Ok", {
           duration: 3000,
@@ -270,6 +267,7 @@ export class HomeComponent implements OnInit {
         });
       }
       else{
+        this.storageInfo = (await this._userService.getCurrentStorage().toPromise()).response;
         this.folder = (await this._folderService.getCurrentFolder().toPromise()).response;
         this._snackBar.open(res2.response, "Ok", {
           duration: 3000,
@@ -303,6 +301,7 @@ export class HomeComponent implements OnInit {
     this.fileNameToUpload = file.name
     this.readFile(file).then(async (result)=>{
       await this._fileService.createFile(this.fileNameToUpload, this.dataUploaded).toPromise();
+      this.storageInfo = (await this._userService.getCurrentStorage().toPromise()).response;
       this.fileNameToUpload="";
       this.dataUploaded="";
       this.folder = (await this._folderService.getCurrentFolder().toPromise()).response;
