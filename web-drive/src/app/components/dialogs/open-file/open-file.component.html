@@ -1,0 +1,13 @@
+<body>
+  <h1 mat-dialog-title>File: {{data.name}}</h1>
+  <h3>Creation date: {{data.creationDate }}</h3>
+  <h3>Modification date: {{data.modificationDate }}</h3>
+  <h3>Size: {{data.size}} bytes</h3>
+  <h1>Content: </h1>
+  <div mat-dialog-content>
+    <pre>{{data.data}}</pre>
+  </div>
+  <div mat-dialog-actions fxLayoutAlign="center center">
+    <button mat-button [mat-dialog-close]="">Ok</button>
+  </div>
+</body>

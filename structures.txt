@@ -1,0 +1,28 @@
+drives
+{
+    "user": "El pepe",
+    "maxBytes": 30,
+    "currentBytes": 15,
+    "root": folder
+    "shared": folder
+    ]
+}
+
+files
+{
+    "type": "file",
+    "name": "prueba",
+    "extension": "txt",
+    "size": 10, 
+    "data": "El texto es este."
+}
+
+folders
+{
+    "type": "folder",
+    directories: [
+        file,
+        folder,
+        file
+    ]
+}

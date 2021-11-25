@@ -1,0 +1,88 @@
+{
+    "Velvet": {
+        "maxBytes": 10000,
+        "currentBytes": 86,
+        "root": {
+            "type": "folder",
+            "name": "root",
+            "directories": [
+                {
+                    "type": "folder",
+                    "name": "Joaquin",
+                    "directories": [
+                        {
+                            "type": "file",
+                            "name": "Prueba.txt",
+                            "data": "Prueba de crear file en directorio.",
+                            "size": 35,
+                            "creationDate": "25/11/2021 14:08:27",
+                            "modificationDate": "25/11/2021 14:08:27"
+                        }
+                    ],
+                    "size": 35
+                },
+                {
+                    "type": "folder",
+                    "name": "Melania",
+                    "directories": [],
+                    "size": 0
+                },
+                {
+                    "type": "folder",
+                    "name": "Jose",
+                    "directories": [],
+                    "size": 0
+                },
+                {
+                    "type": "file",
+                    "name": "Prueba.txt",
+                    "data": "Prueba de crear file en root.",
+                    "size": 29,
+                    "creationDate": "25/11/2021 14:08:10",
+                    "modificationDate": "25/11/2021 14:08:10"
+                }
+            ],
+            "size": 64
+        },
+        "shared": {
+            "type": "folder",
+            "name": "shared",
+            "directories": [
+                {
+                    "type": "file",
+                    "name": "PruebaShare.txt",
+                    "data": "Prueba para compartir.",
+                    "size": 22,
+                    "creationDate": "25/11/2021 14:09:30",
+                    "modificationDate": "25/11/2021 14:09:30"
+                }
+            ],
+            "size": 22
+        }
+    },
+    "Chimi": {
+        "maxBytes": 10000,
+        "currentBytes": 22,
+        "root": {
+            "type": "folder",
+            "name": "root",
+            "directories": [
+                {
+                    "type": "file",
+                    "name": "PruebaShare.txt",
+                    "data": "Prueba para compartir.",
+                    "size": 22,
+                    "creationDate": "25/11/2021 14:09:30",
+                    "modificationDate": "25/11/2021 14:09:30"
+                }
+            ],
+            "size": 22
+        },
+        "shared": {
+            "type": "folder",
+            "name": "shared",
+            "directories": [],
+            "size": 0
+        }
+    }
+}

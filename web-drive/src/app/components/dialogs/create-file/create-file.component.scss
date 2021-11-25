@@ -1,0 +1,36 @@
+button{
+    background-color: #01443C;
+    color: white;
+}
+
+textarea{
+    min-height: 300px;
+}
+
+body{
+    padding: 30px;
+}
+
+::ng-deep snack-bar-container.error-class {
+    background: #ce413f;
+    color: white;
+    button{
+        color: white;
+    }
+}
+
+::ng-deep snack-bar-container.success-class {
+    background: #01443C;
+    color: white;
+    button{
+        color: white;
+    }
+}
+
+h1{
+    font-weight: 600;
+}
+
+.mat-dialog-actions{
+    padding-top: 2%;
+}

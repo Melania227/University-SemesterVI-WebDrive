@@ -1,0 +1,29 @@
+.imgSanta{
+    padding-left: 25px;
+    max-width: 90px;
+    max-height: 90px;
+}
+
+mat-toolbar{
+    height: 100px;
+    background-color: white;
+    mat-divider{
+        width: 100%;
+    }
+}
+
+span{
+    font-size: 35px;
+    font-weight: bold;
+    color: #01443C;
+    padding-left: 20px;
+}
+
+button{
+    background-color: #ce413f;
+    color: white;
+}
+
+/* .bar{
+    width: 77%;
+} */

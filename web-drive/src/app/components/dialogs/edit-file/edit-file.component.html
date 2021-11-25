@@ -1,0 +1,33 @@
+<body>
+    <form [formGroup]="form" fxLayout="column" flex fxLayoutAlign="start start"
+        ngClass.xs="form-xs"
+        ngClass.gt-xs="form-gt-xs">
+        <mat-form-field floatLabel="auto" appearance="outline" color="warn" fxFill>
+            <mat-label>Name</mat-label>
+            <input  
+                #name
+                matInput
+                required
+                formControlName = "name"
+                [class.is-invalid] = "nameInvalid">
+                <mat-error align="end" *ngIf="nameInvalid">Favor introducir su nombre</mat-error>
+        </mat-form-field>
+        <h3>Creation date: {{data.creationDate }}</h3>
+        <h3>Modification date: {{data.modificationDate }}</h3>
+        <h3>Size: {{data.size}} bytes</h3>
+        <h1>Content: </h1>
+        <mat-form-field floatLabel="auto" appearance="outline" color="warn" fxFill>
+            <mat-label>Content</mat-label>
+            <textarea  
+                #content
+                matInput
+                required
+                formControlName = "content"
+                [class.is-invalid] = "contentInvalid"></textarea>
+                <mat-error align="end" *ngIf="contentInvalid">Favor introducir el contenido del archivo</mat-error>
+        </mat-form-field>
+        <div class="container" fxLayoutAlign="end end" fxFill>
+            <button mat-raised-button [mat-dialog-close]="{'name': form.get('name')?.value, 'content': form.get('content')?.value}">Editar Archivo</button>
+        </div>
+    </form>
+</body>

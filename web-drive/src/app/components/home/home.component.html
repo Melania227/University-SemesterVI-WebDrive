@@ -1,0 +1,96 @@
+<app-navbar></app-navbar>
+
+<body>
+    <div class="container" fxLayout="column" fxLayoutAlign="start stretch">
+        <mat-drawer-container class="example-container">
+            <mat-drawer mode="side" opened>
+                <mat-list>
+                    <div mat-subheader>{{user}}'s drive</div>
+                    <mat-list-item (click)="openDrive()">
+                    <mat-icon mat-list-icon>folder</mat-icon>
+                    <div mat-line>Drive</div>
+                    <div mat-line>{{storageInfo.currentBytes}}/{{storageInfo.maxBytes}} bytes</div>
+                    <div mat-line>{{storageInfo.percentage*100 | number:'.1-5'}}%</div>
+                    </mat-list-item>
+                    <mat-divider></mat-divider>
+                    <mat-list-item (click)="openShared()">
+                    <mat-icon mat-list-icon>folder_shared</mat-icon>
+                    <div mat-line>Shared</div>
+                    <div mat-line> Shared with me </div>
+                    </mat-list-item>
+                </mat-list>
+            </mat-drawer>
+            
+            <mat-drawer-content>
+
+                <div class="container topBar" fxLayout="row" fxLayoutAlign="start center">
+                    <mat-card fxFill fxLayout="row">
+                        <div class="container" fxLayout="column" fxLayoutAlign="center start" fxFlex="80%">
+                            <div class="container navigate" fxLayout="row" fxLayoutGap="2px" fxLayoutAlign="start center">
+                                <div *ngFor="let path of paths; let i = index" fxLayout="row">
+                                    <mat-icon>navigate_next</mat-icon>
+                                    <a (click)="navigate(path, i)">{{path}}</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container" fxLayout="column" fxFlex="20%">
+                            <div class="container addBtn" fxLayoutAlign="end center">
+                                <button (click)="addFile()" mat-mini-fab>
+                                    <mat-icon>note_add</mat-icon>
+                                </button>
+                                <button (click)="addFolder()" mat-mini-fab>
+                                    <mat-icon>create_new_folder</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </mat-card>
+                </div>
+
+                <div class="container loading" *ngIf="uploading" fxLayoutAlign="center center">
+                    <mat-spinner></mat-spinner>
+                </div>
+
+                <div class="container" *ngIf="!uploading">
+                    <div class="container" fxLayout="row" fxLayoutAlign="space-between start">
+                        <div class="container files" fxLayout="row wrap" fxLayoutGap="30px">
+                            <mat-card *ngFor="let item of folder.directories" fxLayout="column" fxLayoutAlign="center center" (click)="item.type==='file'?openFile(item):openFolder(item)" (contextmenu)="onContextMenu($event, item)">
+                                <mat-icon *ngIf="item.type==='folder'">folder</mat-icon>
+                                <mat-icon *ngIf="item.type==='file'">description</mat-icon>
+                                <p>{{ item.name }}</p>
+                            </mat-card>
+                        </div>
+                        <div class="conatiner move_copyBtn" fxLayout="column" fxLayoutAlign="start start">
+                            <button (click)="moveHere()" mat-mini-fab *ngIf="_fileSystemService.isMoving()">
+                                <mat-icon>save</mat-icon>
+                            </button>
+                            <button (click)="pasteHere()" mat-mini-fab>
+                                <mat-icon>content_paste</mat-icon>
+                            </button>
+                            <button  mat-mini-fab (click)="fileUpload.click()">
+                                <mat-icon>cloud_upload</mat-icon>
+                            </button>
+                            <input type='file' accept="text/plain" class="file-input" (change)='uploadFile($event)' #fileUpload>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="visibility: hidden; position: fixed"
+                    [style.left]="contextMenuPosition.x"
+                    [style.top]="contextMenuPosition.y"
+                    [matMenuTriggerFor]="menuRightClick">
+                </div>
+                <mat-menu #menuRightClick="matMenu">
+                    <ng-template matMenuContent let-item="item">
+                        <button mat-menu-item (click)="onContextMenuOpen(item)">Open</button>
+                        <button mat-menu-item (click)="item.type==='file'?editFile(item):editFolder(item)">Edit</button>
+                        <button mat-menu-item (click)="onContextMenuDelete(item)">Delete</button>
+                        <button mat-menu-item (click)="onContextMenuCopy(item)">Copy</button>
+                        <button mat-menu-item (click)="onContextMenuMove(item)">Move</button>
+                        <button mat-menu-item (click)="item.type==='file'?onContextMenuDownload(item):onContextMenuDownloadError()">Download</button>
+                        <button mat-menu-item (click)="onContextMenuShare(item)">Share</button>
+                    </ng-template>
+                </mat-menu>
+            </mat-drawer-content>
+        </mat-drawer-container>
+    </div>
+</body>

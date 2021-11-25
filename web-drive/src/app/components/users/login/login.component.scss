@@ -1,0 +1,73 @@
+.sideImg{
+    background-image: url('../../../../images/from\ the\ elbow\ team!.png');
+    width: 100%;
+    height: 937px;
+}
+
+
+.formSide{
+    background-color: tan;
+    //background-color: slategrey;
+    //background-color: papayawhip;
+    //background-color: moccasin;
+    min-height: 100% !important;
+    .loginForm{
+        min-width: 60%;
+    }
+    mat-card-title{
+        padding: 30px;
+        color: #01443C;
+        font-size: 40px;
+    }
+    
+    .tag{
+        padding: 20px;
+        padding-top: 30px;
+        color: #01443C;
+        font-size: 15px;
+        font-weight: 500;
+        text-decoration:none;
+    }
+    .btnLogin{
+        color: white;
+        background-color: #01443C;
+    }
+
+    ::ng-deep{
+        mat-form-field {
+        &.ng-invalid,
+        &.mat-form-field-invalid {
+          .mat-form-field-wrapper {
+            padding-bottom: 7px;
+          }
+        }
+      
+        .mat-form-field {
+          &-underline {
+            position: static;
+          }
+      
+          &-subscript-wrapper {
+            position: static;
+          }
+        }
+      }
+    }
+}
+
+
+::ng-deep snack-bar-container.error-class {
+  background: #ce413f;
+  color: white;
+  button{
+    color: white;
+  }
+}
+
+::ng-deep snack-bar-container.success-class {
+  background: #01443C;
+  color: white;
+  button{
+    color: white;
+  }
+}
