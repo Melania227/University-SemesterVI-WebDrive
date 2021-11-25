@@ -9,13 +9,14 @@
                     <mat-list-item (click)="openDrive()">
                     <mat-icon mat-list-icon>folder</mat-icon>
                     <div mat-line>Drive</div>
-                    <div mat-line> Info del folder </div>
+                    <div mat-line>{{storageInfo.currentBytes}}/{{storageInfo.maxBytes}}bytes</div>
+                    <div mat-line>{{storageInfo.percentage*100}}%</div>
                     </mat-list-item>
                     <mat-divider></mat-divider>
                     <mat-list-item (click)="openShared()">
                     <mat-icon mat-list-icon>folder_shared</mat-icon>
                     <div mat-line>Shared</div>
-                    <div mat-line> Info del folder </div>
+                    <div mat-line> Shared with me </div>
                     </mat-list-item>
                 </mat-list>
             </mat-drawer>
@@ -61,6 +62,10 @@
                             <button (click)="pasteHere()" mat-mini-fab>
                                 <mat-icon>content_paste</mat-icon>
                             </button>
+                            <button  mat-mini-fab (click)="fileUpload.click()">
+                                <mat-icon>cloud_upload</mat-icon>
+                            </button>
+                            <input type='file' class="file-input" (change)='uploadFile($event)' #fileUpload>
                         </div>
                     </div>
                 </div>
@@ -77,6 +82,7 @@
                         <button mat-menu-item (click)="onContextMenuDelete(item)">Delete</button>
                         <button mat-menu-item (click)="onContextMenuCopy(item)">Copy</button>
                         <button mat-menu-item (click)="onContextMenuMove(item)">Move</button>
+                        <button mat-menu-item (click)="item.type==='file'?onContextMenuDownload(item):onContextMenuDownloadError()">Download</button>
                         <button mat-menu-item (click)="onContextMenuShare(item)">Share</button>
                     </ng-template>
                 </mat-menu>

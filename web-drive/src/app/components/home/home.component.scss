@@ -102,3 +102,22 @@ a{
         color: white;
     }
 }
+
+.mat-subheader{
+    button{
+        background-color: #ce413f !important;
+        margin-left: 15px;
+    }
+}
+
+.file-input {
+    display: none;
+}
+
+.file-upload{
+    display: block;
+}
+
+.mat-dialog-actions{
+    padding-top: 2%;
+}
