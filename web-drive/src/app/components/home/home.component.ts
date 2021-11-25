@@ -121,8 +121,8 @@ export class HomeComponent implements OnInit {
         });
       }
       else{
-        this.folder = (await this._folderService.getCurrentFolder().toPromise()).response;
         this.storageInfo = (await this._userService.getCurrentStorage().toPromise()).response;
+        this.folder = (await this._folderService.getCurrentFolder().toPromise()).response;        
         this._snackBar.open(info.response, "Ok", {
           duration: 3000,
           panelClass: ['success-class'],
