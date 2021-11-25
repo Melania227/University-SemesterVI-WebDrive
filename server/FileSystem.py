@@ -145,6 +145,10 @@ class FileSystem:
                 destinationPaths = self.sessions[user]
                 destinationFolder = self.getFolder(user, destinationPaths)
 
+                if(len(destinationPaths)>len(sourcePaths)):
+                    if(destinationPaths[:len(sourcePaths)]==sourcePaths):
+                        return(True,"It can't be move here.")
+
                 if("error" in destinationFolder):
                 	return sourceFolder 
                 
