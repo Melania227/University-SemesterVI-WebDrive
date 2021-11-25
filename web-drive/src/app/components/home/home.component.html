@@ -61,6 +61,10 @@
                             <button (click)="pasteHere()" mat-mini-fab>
                                 <mat-icon>content_paste</mat-icon>
                             </button>
+                            <button  mat-mini-fab (click)="fileUpload.click()">
+                                <mat-icon>cloud_upload</mat-icon>
+                            </button>
+                            <input type='file' class="file-input" (change)='uploadFile($event)' #fileUpload>
                         </div>
                     </div>
                 </div>
@@ -77,6 +81,7 @@
                         <button mat-menu-item (click)="onContextMenuDelete(item)">Delete</button>
                         <button mat-menu-item (click)="onContextMenuCopy(item)">Copy</button>
                         <button mat-menu-item (click)="onContextMenuMove(item)">Move</button>
+                        <button mat-menu-item (click)="item.type==='file'?onContextMenuDownload(item):onContextMenuDownloadError()">Download</button>
                         <button mat-menu-item (click)="onContextMenuShare(item)">Share</button>
                     </ng-template>
                 </mat-menu>

@@ -14,6 +14,7 @@ import { UserService } from 'src/app/services/user.service';
 import { ChooseSharedComponent } from '../dialogs/choose-shared/choose-shared.component';
 import { FilesystemService } from 'src/app/services/filesystem.service';
 import { Router } from '@angular/router';
+import { File } from 'src/app/models/file.model';
 
 @Component({
   selector: 'app-home',
@@ -24,6 +25,8 @@ export class HomeComponent implements OnInit {
 
   folder!: any;
   paths: string[]=[];
+  fileNameToUpload!:string;
+  dataUploaded!:string;
 
   @ViewChild(MatMenuTrigger) contextMenu!: MatMenuTrigger;
 
@@ -291,6 +294,52 @@ export class HomeComponent implements OnInit {
   async navigate(path: string, index: number){
     this.folder = (await this._folderService.goToFolder(this.paths,index).toPromise()).response;
     this.paths = this.paths.slice(0,index+1);
+  }
+
+
+  /* DOWNLOAD */
+  uploadFile(event:any) {
+    let file = event.target.files[0];
+    this.fileNameToUpload = file.name
+    this.readFile(file).then(async (result)=>{
+      await this._fileService.createFile(this.fileNameToUpload, this.dataUploaded).toPromise();
+      this.fileNameToUpload="";
+      this.dataUploaded="";
+      this.folder = (await this._folderService.getCurrentFolder().toPromise()).response;
+    })
+  }
+
+  readFile(file:Blob){
+    return new Promise((resolve, reject) => {
+      var fr = new FileReader();  
+      fr.onload = () => {
+        this.dataUploaded = fr.result as string
+        resolve(fr.result as string)
+      };
+      fr.onerror = reject;
+      fr.readAsText(file);
+    });
+  }
+
+  doDownload(filename:string, text:string) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  }
+  
+  onContextMenuDownload(item:File){
+    this.doDownload(item.name,item.data);
+  }
+
+  onContextMenuDownloadError(){
+    this._snackBar.open("It's impossible to download a folder.", "Ok", {
+      duration: 3000,
+      panelClass: ['error-class'],
+    });
   }
 
 }
