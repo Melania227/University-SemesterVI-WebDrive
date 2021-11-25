@@ -323,7 +323,7 @@ class FileSystem:
         directories = folder["directories"]
 
         for dir in directories:
-            if(dir["name"]== newName):
+            if(dir["name"]== newName  and newName!=name):
                 return self.response(True, "This directory already exists.")
 
         for dir in directories:
@@ -405,7 +405,7 @@ class FileSystem:
         directories = folder["directories"]
         
         for dir in directories:
-            if(dir["name"]== newName):
+            if(dir["name"]== newName  and newName!=name):
                 return self.response(True, "This file already exists.")
 
         for dir in directories:
