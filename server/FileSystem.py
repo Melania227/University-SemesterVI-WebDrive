@@ -149,10 +149,6 @@ class FileSystem:
                 destinationPaths = self.sessions[user]
                 destinationFolder = self.getFolder(user, destinationPaths)
 
-                if(len(destinationPaths)>len(sourcePaths)):
-                    if(destinationPaths[:len(sourcePaths)]==sourcePaths):
-                        return self.response(True,"It can't be move here.")
-
                 if("error" in destinationFolder):
                 	return sourceFolder 
                 
@@ -222,7 +218,8 @@ class FileSystem:
             
 
                 destinationFolder["directories"].append(copy.deepcopy(dir)) 
-
+                
+                self.drives[user]["currentBytes"] += fileLen
                 destinationFolder["size"] += fileLen
                 destinationPaths = destinationPaths.copy()
                 destinationPaths = destinationPaths[:-1] 
