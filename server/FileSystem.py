@@ -1,6 +1,7 @@
 from os import path, listdir
 from datetime import datetime
 import json
+import copy
 
 from DataModels import newDrive, newFolder, newFile
 
@@ -141,7 +142,7 @@ class FileSystem:
         for dir in directories:
             if(dir["name"] == name):
                 
-                destinationPaths = self.sessions[name]
+                destinationPaths = self.sessions[user]
                 destinationFolder = self.getFolder(user, destinationPaths)
 
                 if("error" in destinationFolder):
@@ -162,7 +163,7 @@ class FileSystem:
                     sourcePaths = sourcePaths[:-1]
 
                 destinationFolder["size"] += fileLen
-                destinationFolder = destinationFolder.copy()
+                destinationPaths = destinationPaths.copy()
                 destinationPaths = destinationPaths[:-1] 
                 
                 while(destinationPaths != []):
@@ -190,7 +191,7 @@ class FileSystem:
         for dir in directories:
             if(dir["name"] == name):
 
-                destinationPaths = self.sessions[name]
+                destinationPaths = self.sessions[user]
                 destinationFolder = self.getFolder(user, destinationPaths)
                 
                 if("error" in destinationFolder):
@@ -205,10 +206,10 @@ class FileSystem:
                     return self.response(True, "There is no space available for copy this file.") 
             
 
-                destinationFolder["directories"] = directories.copy()    
+                destinationFolder["directories"].append(copy.deepcopy(dir)) 
 
                 destinationFolder["size"] += fileLen
-                destinationFolder = destinationFolder.copy()
+                destinationPaths = destinationPaths.copy()
                 destinationPaths = destinationPaths[:-1] 
                 
                 while(destinationPaths != []):

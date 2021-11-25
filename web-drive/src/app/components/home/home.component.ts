@@ -11,6 +11,10 @@ import { EditFolderComponent } from '../dialogs/edit-folder/edit-folder.componen
 import { OpenFileComponent } from '../dialogs/open-file/open-file.component';
 import { CreateFileComponent } from '../dialogs/create-file/create-file.component';
 import { UserService } from 'src/app/services/user.service';
+import { ChooseSharedComponent } from '../dialogs/choose-shared/choose-shared.component';
+import { FilesystemService } from 'src/app/services/filesystem.service';
+import { Router } from '@angular/router';
+import { File } from 'src/app/models/file.model';
 
 @Component({
   selector: 'app-home',
@@ -21,6 +25,9 @@ export class HomeComponent implements OnInit {
 
   folder!: any;
   paths: string[]=[];
+  fileNameToUpload!:string;
+  dataUploaded!:string;
+  storageInfo:any;
 
   @ViewChild(MatMenuTrigger) contextMenu!: MatMenuTrigger;
 
@@ -29,14 +36,19 @@ export class HomeComponent implements OnInit {
   constructor(
     private readonly _folderService: FolderService,
     private readonly _fileService: FilesService,
+    public _fileSystemService: FilesystemService,
     private readonly _userService: UserService,
+    private readonly _router: Router,
     private _openDialog: MatDialog,
-    private _snackBar: MatSnackBar
+    private _snackBar: MatSnackBar,
   ) { }
 
   async ngOnInit():Promise<void> {
+    (await this._userService.cleanPaths().toPromise());
     this.folder = (await this._folderService.openFolder('root').toPromise()).response;
     this.paths.push('root');
+    this.storageInfo = (await this._userService.getCurrentStorage().toPromise()).response;
+    //{"maxBytes": max, "currentBytes": current, "percentage": percentage}
   }
 
   onContextMenu(event: MouseEvent, item: (File|Folder)) {
@@ -59,6 +71,31 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  async onContextMenuDelete(item: (File|Folder)) {
+    let info;
+    if(item.type==="file"){
+      info = (await this._fileService.deleteFile(item.name).toPromise());
+    }
+    else{
+      info = (await this._folderService.deleteFolder(item.name).toPromise());
+    }
+
+    if(info.error){
+      this._snackBar.open(info.response, "Ok", {
+        duration: 3000,
+        panelClass: ['error-class'],
+      });
+    }
+    else{
+      this.folder = (await this._folderService.getCurrentFolder().toPromise()).response;
+      this.storageInfo = (await this._userService.getCurrentStorage().toPromise()).response;
+      this._snackBar.open(info.response, "Ok", {
+        duration: 3000,
+        panelClass: ['success-class'],
+      });
+    }
+  }
+
   onContextMenuEdit(item: (File|Folder)) {
     if (item.type!=="file"){
       alert(`Edit name of ${item.name}`);
@@ -68,24 +105,79 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  onContextMenuCopy(item: (File|Folder)) {
-    alert(`Copy ${item.name}`);
+  async onContextMenuCopy(item: (File|Folder)) {
+    (await this._fileSystemService.saveCopyInfo(item.name));
   }
 
-  onContextMenuMove(item: (File|Folder)) {
-    alert(`Move ${item.name}`);
+  async onContextMenuMove(item: (File|Folder)) {
+    (await this._fileSystemService.saveMoveInfo(item.name));
+    (await this._userService.cleanPaths().toPromise());
+    this.folder = (await this._folderService.openFolder('root').toPromise()).response;
+    this.paths = ['root'];
+  }
+
+  async pasteHere(){
+    if (this._fileSystemService.isCopying()){
+      let info = (await this._fileSystemService.copy().toPromise());
+      this._fileSystemService.cleanVariables();
+      if(info.error){
+        this._snackBar.open(info.response, "Ok", {
+          duration: 3000,
+          panelClass: ['error-class'],
+        });
+      }
+      else{
+        this.folder = (await this._folderService.getCurrentFolder().toPromise()).response;
+        this._snackBar.open(info.response, "Ok", {
+          duration: 3000,
+          panelClass: ['success-class'],
+        });
+      }
+    }
+    else{
+      this._snackBar.open("There's nothing on clipboard", "Ok", {
+        duration: 3000,
+        panelClass: ['error-class'],
+      });
+    }
+  }
+
+  async moveHere(){
+    let info = (await this._fileSystemService.move().toPromise());
+    this._fileSystemService.cleanVariables();
+    if(info.error){
+      this._snackBar.open(info.response, "Ok", {
+        duration: 3000,
+        panelClass: ['error-class'],
+      });
+    }
+    else{
+      this.folder = (await this._folderService.getCurrentFolder().toPromise()).response;
+      this._snackBar.open(info.response, "Ok", {
+        duration: 3000,
+        panelClass: ['success-class'],
+      });
+    }
   }
 
   onContextMenuShare(item: (File|Folder)){
-    alert(`Share ${item.name}`);
-  }
-
-  onContextMenuAddFile(){
-    alert(`Create File`);
-  }
-
-  onContextMenuAddFolder(){
-    alert(`Create Folder`);
+    let done = this._openDialog.open(ChooseSharedComponent, {width: '1000px'}).afterClosed();
+    done.subscribe(async (res)=>{
+      let res2 = item.type==='file'?(await this._fileService.shareFile(item.name,res.user).toPromise()):(await this._folderService.shareFolder(item.name,res.user).toPromise());
+      if(res2.error){
+        this._snackBar.open(res2.response, "Ok", {
+          duration: 3000,
+          panelClass: ['error-class'],
+        });
+      }
+      else{
+        this.folder = (await this._folderService.getCurrentFolder().toPromise()).response;
+        this._snackBar.open(res2.response, "Ok", {
+          duration: 3000,
+          panelClass: ['success-class'],
+        });
+      }
+    });
   }
 
   async editFile(item: File){
@@ -137,7 +229,6 @@ export class HomeComponent implements OnInit {
   async openFile(item: File){
     let info = (await this._fileService.getFile(item.name).toPromise()).response;
     this._openDialog.open(OpenFileComponent, {width: '1000px', data: info});
-    //console.log((await this._fileService.getFile(item.name).toPromise()));
   }
 
   openOnMouseOver() {
@@ -155,6 +246,7 @@ export class HomeComponent implements OnInit {
         });
       }
       else{
+        this.storageInfo = (await this._userService.getCurrentStorage().toPromise()).response;
         this.folder = (await this._folderService.getCurrentFolder().toPromise()).response;
         this._snackBar.open(res2.response, "Ok", {
           duration: 3000,
@@ -175,6 +267,7 @@ export class HomeComponent implements OnInit {
         });
       }
       else{
+        this.storageInfo = (await this._userService.getCurrentStorage().toPromise()).response;
         this.folder = (await this._folderService.getCurrentFolder().toPromise()).response;
         this._snackBar.open(res2.response, "Ok", {
           duration: 3000,
@@ -197,11 +290,55 @@ export class HomeComponent implements OnInit {
   }
 
   async navigate(path: string, index: number){
-    console.log(this.paths);
-    console.log(index);
     this.folder = (await this._folderService.goToFolder(this.paths,index).toPromise()).response;
     this.paths = this.paths.slice(0,index+1);
-    //this.paths = this.paths.length===0?["root"]:this.paths;
+  }
+
+
+  /* DOWNLOAD */
+  uploadFile(event:any) {
+    let file = event.target.files[0];
+    this.fileNameToUpload = file.name
+    this.readFile(file).then(async (result)=>{
+      await this._fileService.createFile(this.fileNameToUpload, this.dataUploaded).toPromise();
+      this.storageInfo = (await this._userService.getCurrentStorage().toPromise()).response;
+      this.fileNameToUpload="";
+      this.dataUploaded="";
+      this.folder = (await this._folderService.getCurrentFolder().toPromise()).response;
+    })
+  }
+
+  readFile(file:Blob){
+    return new Promise((resolve, reject) => {
+      var fr = new FileReader();  
+      fr.onload = () => {
+        this.dataUploaded = fr.result as string
+        resolve(fr.result as string)
+      };
+      fr.onerror = reject;
+      fr.readAsText(file);
+    });
+  }
+
+  doDownload(filename:string, text:string) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  }
+  
+  onContextMenuDownload(item:File){
+    this.doDownload(item.name,item.data);
+  }
+
+  onContextMenuDownloadError(){
+    this._snackBar.open("It's impossible to download a folder.", "Ok", {
+      duration: 3000,
+      panelClass: ['error-class'],
+    });
   }
 
 }

@@ -20,6 +20,7 @@ mat-list-item:hover{
     padding-top: 30px;
     mat-card{
         padding: 20px;
+        margin-bottom: 20px;
         padding-right: 40px;
         padding-left: 40px;
         mat-icon{
@@ -43,6 +44,15 @@ mat-drawer-content{
     button{
         background-color: #ce413f !important;
         margin-left: 15px;
+    }
+}
+
+.move_copyBtn{
+    padding: 20px;
+    .mat-mini-fab{
+        background-color: #ce413f !important;
+        margin-left: 15px;
+        margin-bottom: 20px;
     }
 }
 
@@ -91,4 +101,23 @@ a{
     button{
         color: white;
     }
+}
+
+.mat-subheader{
+    button{
+        background-color: #ce413f !important;
+        margin-left: 15px;
+    }
+}
+
+.file-input {
+    display: none;
+}
+
+.file-upload{
+    display: block;
+}
+
+.mat-dialog-actions{
+    padding-top: 2%;
 }
